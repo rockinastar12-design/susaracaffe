@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Susara Caffe Baglung | Best Coffee in Town</title>
+    <style>
+        :root {
+            --primary: #5d4037; /* Rich Coffee Brown */
+            --accent: #d7ccc8;  /* Soft Warm Grey */
+            --highlight: #f4a261; /* Warm Sunset Orange */
+            --light: #faf9f6;
+            --dark: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: var(--light);
+            color: var(--dark);
+            scroll-behavior: smooth;
+        }
+
+        /* Header & Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+
+        .logo { 
+            font-size: 1.6rem; 
+            font-weight: 800; 
+            color: var(--primary); 
+            letter-spacing: -1px;
+        }
+
+        /* Hero Section */
+        header {
+            height: 70vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.4)), 
+                        url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        header h1 { font-size: 3.5rem; margin-bottom: 10px; }
+        header p { font-size: 1.2rem; margin-bottom: 25px; opacity: 0.9; }
+
+        /* Menu Section */
+        .container { padding: 5rem 10%; }
+        .section-title { text-align: center; margin-bottom: 3rem; }
+        .section-title h2 { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+        .underline { width: 60px; height: 4px; background: var(--highlight); margin: 0 auto; }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        .menu-card:hover { transform: translateY(-10px); }
+        .card-img { height: 200px; background-size: cover; background-position: center; }
+
+        .card-info { padding: 1.5rem; text-align: left; }
+        .price { color: var(--primary); font-weight: bold; font-size: 1.2rem; }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover { background: var(--dark); }
+
+        /* Contact Section */
+        #contact { background: var(--accent); padding: 4rem 10%; text-align: center; }
+
+        /* Cart Notification */
+        #cart-pop {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">SUSARA CAFFE</div>
+        <div class="nav-links">
+            <a href="#menu" style="text-decoration:none; color:var(--dark); margin-right:20px;">Menu</a>
+            <a href="#contact" style="text-decoration:none; color:var(--dark);">Find Us</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Susara Caffe Baglung</h1>
+        <p>Premium Coffee. Local Heart. Every Cup Matters.</p>
+        <button class="btn" onclick="document.getElementById('menu').scrollIntoView()">Order Now</button>
+    </header>
+
+    <section class="container" id="menu">
+        <div class="section-title">
+            <h2>Our Signature Menu</h2>
+            <div class="underline"></div>
+        </div>
+        
+        <div class="menu-grid">
+            <div class="menu-card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1541167760496-162955ed8a9f?w=400');"></div>
+                <div class="card-info">
+                    <h3>Baglung Special Latte</h3>
+                    <p>Silky smooth espresso with steamed local milk.</p>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="price">रू 250</span>
+                        <button class="btn" onclick="addToCart('Special Latte')">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400');"></div>
+                <div class="card-info">
+                    <h3>Dark Roast Americano</h3>
+                    <p>Bold, intense, and perfect for a morning boost.</p>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="price">रू 180</span>
+                        <button class="btn" onclick="addToCart('Americano')">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400');"></div>
+                <div class="card-info">
+                    <h3>Fresh Baked Muffin</h3>
+                    <p>Warm blueberry muffin baked every morning.</p>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="price">रू 150</span>
+                        <button class="btn" onclick="addToCart('Muffin')">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Visit Susara Caffe Baglung</h2>
+        <p>📍 Baglung Kalika Mandir Gate, Baglung Bazaar, Nepal</p>
+        <p>📞 +977-9849957082 | 🕒 Open 6:00 AM - 8:00 PM</p>
+    </section>
+
+    <div id="cart-pop">
+        🛒 <span id="items-count">0</span> Items in your order 
+        <button onclick="alert('Proceeding to Baglung Local Delivery...')" style="margin-left:15px; background:var(--highlight); border:none; padding:5px 15px; border-radius:20px; cursor:pointer;">Checkout</button>
+    </div>
+
+    <script>
+        let count = 0;
+        function addToCart(item) {
+            count++;
+            const pop = document.getElementById('cart-pop');
+            const countDisplay = document.getElementById('items-count');
+            pop.style.display = 'block';
+            countDisplay.innerText = count;
+            
+            // Simple visual feedback
+            console.log("Added " + item + " to cart");
+        }
+    </script>
+
+</body>
+</html>
