@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Susara Caffe Baglung | Luxury Digital Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #E1AC7E;
+            --gold: #FFD700;
+            --bg: #0A0A0A;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+        
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Background Visuals */
+        .glow-sphere {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(225, 172, 126, 0.1) 0%, transparent 70%);
+            z-index: -1;
+            border-radius: 50%;
+            filter: blur(50px);
+        }
+
+        .bean {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: float 15s infinite linear;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* Navigation */
+        nav {
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10, 10, 10, 0.7);
+        }
+
+        .logo { font-family: 'Syncopate', sans-serif; font-size: 1.2rem; color: var(--accent); letter-spacing: 2px; }
+
+        /* Hero */
+        .hero {
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            padding: 0 10%;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            line-height: 0.9;
+            margin: 0;
+            font-family: 'Syncopate', sans-serif;
+            background: linear-gradient(to bottom, #fff 40%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Category Filter Bar */
+        .filter-container {
+            padding: 20px 5%;
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            position: sticky;
+            top: 75px;
+            z-index: 999;
+            background: var(--bg);
+            scrollbar-width: none;
+        }
+
+        .filter-container::-webkit-scrollbar { display: none; }
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            font-weight: 800;
+        }
+
+        /* Menu Grid */
+        .menu-container { padding: 20px 10% 120px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .category-tag {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--accent);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        .item-name { font-size: 1.1rem; font-weight: 600; margin: 0; line-height: 1.4; }
+        .price-tag { color: var(--gold); font-weight: 800; font-size: 1.1rem; margin: 12px 0; }
+
+        .add-btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            font-size: 0.8rem;
+        }
+
+        .add-btn:hover { background: var(--accent); color: #000; }
+
+        /* Order Bar */
+        .checkout-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            color: #000;
+            padding: 15px 40px;
+            border-radius: 100px;
+            font-weight: 800;
+            display: none;
+            box-shadow: 0 10px 50px rgba(225, 172, 126, 0.5);
+            z-index: 2000;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .hero { height: 40vh; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .menu-container { padding: 20px 5% 120px; }
+            .item-name { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-sphere" style="top: -100px; left: -100px;"></div>
+    <div class="glow-sphere" style="bottom: -100px; right: -100px;"></div>
+
+    <nav>
+        <div class="logo">SUSARA.</div>
+        <div style="font-size: 0.7rem; letter-spacing: 1px; font-weight: 800;">BAGLUNG TEA ESTATE</div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <p style="letter-spacing: 5px; color: var(--accent); margin-bottom: 10px; font-weight: 600;">EST. 2026</p>
+            <h1>DIGITAL<br>MENU.</h1>
+        </div>
+    </div>
+
+    <div class="filter-container" id="filter-bar">
+        <button class="filter-btn active" onclick="filterItems('all', this)">All</button>
+        <button class="filter-btn" onclick="filterItems('coffee', this)">Coffee</button>
+        <button class="filter-btn" onclick="filterItems('tea', this)">Tea</button>
+        <button class="filter-btn" onclick="filterItems('breakfast', this)">Breakfast</button>
+        <button class="filter-btn" onclick="filterItems('momo', this)">Momo</button>
+        <button class="filter-btn" onclick="filterItems('snacks', this)">Snacks</button>
+        <button class="filter-btn" onclick="filterItems('lassi', this)">Lassi</button>
+    </div>
+
+    <div class="menu-container">
+        <div class="grid" id="menu-grid">
+            </div>
+    </div>
+
+    <div class="checkout-bar" id="checkout-bar" onclick="alert('Proceeding to order summary...')">
+        VIEW ORDER (<span id="cart-count">0</span>) &nbsp; →
+    </div>
+
+    <script>
+        // Official Menu Data from PDF [cite: 8-50]
+        const fullMenu = [
+            // Coffee & Hot Drinks [cite: 8-13]
+            { name: "Ristretto", price: 100, cat: "coffee" },
+            { name: "Espresso", price: 100, cat: "coffee" },
+            { name: "Doppio", price: 150, cat: "coffee" },
+            { name: "Americano", price: 130, cat: "coffee" },
+            { name: "Cappuccino", price: 150, cat: "coffee" },
+            { name: "Café Latte", price: 180, cat: "coffee" },
+            { name: "Honey Latte", price: 200, cat: "coffee" },
+            { name: "Lungo", price: 150, cat: "coffee" },
+            { name: "Mocaccino", price: 180, cat: "coffee" },
+            { name: "Hot Chocolate", price: 200, cat: "coffee" },
+            { name: "Hot Lemon with Honey", price: 100, cat: "coffee" },
+            
+            // Tea [cite: 14-16]
+            { name: "Lemon Tea", price: 60, cat: "tea" },
+            { name: "Green Tea", price: 50, cat: "tea" },
+            { name: "Black Tea", price: 50, cat: "tea" },
+
+            // Breakfast [cite: 17-20]
+            { name: "Chana", price: 80, cat: "breakfast" },
+            { name: "Boiled Egg", price: 40, cat: "breakfast" },
+            { name: "Parauta", price: 100, cat: "breakfast" },
+            { name: "Puri Tarkari", price: 120, cat: "breakfast" },
+            { name: "Sel Roti", price: 50, cat: "breakfast" },
+            { name: "Omelette", price: 100, cat: "breakfast" },
+            { name: "Bread Omelette", price: 120, cat: "breakfast" },
+
+            // Momo (Selected Favorites) [cite: 27-28]
+            { name: "Veg Steam Momo", price: 150, cat: "momo" },
+            { name: "Chicken Jhol Momo", price: 280, cat: "momo" },
+            { name: "Buff Cilly Momo", price: 210, cat: "momo" },
+
+            // Snacks & Burgers [cite: 21-26, 36-40]
+            { name: "Veg Sandwich", price: 150, cat: "snacks" },
+            { name: "Chicken Burger", price: 250, cat: "snacks" },
+            { name: "Veg Katti Roll", price: 180, cat: "snacks" },
+            { name: "Chicken Chilly", price: 300, cat: "snacks" },
+            { name: "Chicken Lollipop", price: 300, cat: "snacks" },
+            { name: "French Fry", price: 200, cat: "snacks" },
+
+            // Lassi [cite: 44-47]
+            { name: "Plain Lassi", price: 100, cat: "lassi" },
+            { name: "Banana Lassi", price: 120, cat: "lassi" },
+            { name: "Chocolate Lassi", price: 150, cat: "lassi" }
+        ];
+
+        function renderMenu(items) {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = items.map(item => `
+                <div class="card">
+                    <div>
+                        <div class="category-tag">${item.cat}</div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="price-tag">Rs. ${item.price}</div>
+                    </div>
+                    <button class="add-btn" onclick="addToCart()">ADD TO ORDER</button>
+                </div>
+            `).join('');
+        }
+
+        function filterItems(category, btn) {
+            // Update Active Button
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Filter Logic
+            if (category === 'all') {
+                renderMenu(fullMenu);
+            } else {
+                const filtered = fullMenu.filter(i => i.cat === category);
+                renderMenu(filtered);
+            }
+        }
+
+        let count = 0;
+        function addToCart() {
+            count++;
+            document.getElementById('checkout-bar').style.display = 'block';
+            document.getElementById('cart-count').innerText = count;
+        }
+
+        // Initialize
+        renderMenu(fullMenu);
+
+        // Floating Bean Decoration
+        for(let i=0; i<10; i++) {
+            let bean = document.createElement('div');
+            bean.className = 'bean';
+            bean.innerHTML = '☕';
+            bean.style.left = Math.random() * 100 + 'vw';
+            bean.style.top = Math.random() * 100 + 'vh';
+            bean.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            document.body.appendChild(bean);
+        }
+    </script>
+</body>
+</html>
