@@ -12,9 +12,10 @@
             --bg: #faf9f6;
             --dark: #1a1a1a;
             --card: #ffffff;
+            --danger: #e63946;
         }
 
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--dark); padding-bottom: 140px; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--dark); padding-bottom: 160px; }
         
         header { 
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80');
@@ -31,7 +32,6 @@
             display: inline-block; margin: 30px 0 15px; font-size: 1.1rem; font-weight: 800;
         }
 
-        /* Table Input Styling */
         .table-input-section {
             background: var(--highlight);
             padding: 15px;
@@ -72,23 +72,29 @@
 
         #cart-bar { 
             position: fixed; bottom: 20px; left: 10px; right: 10px; background: var(--dark); 
-            color: white; padding: 15px 25px; border-radius: 50px; display: none; 
-            justify-content: space-between; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 1000;
+            color: white; padding: 15px; border-radius: 25px; display: none; 
+            flex-direction: column; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 1000;
         }
-        .checkout-btn { background: var(--highlight); color: var(--dark); border: none; padding: 10px 20px; border-radius: 25px; font-weight: 800; cursor: pointer; }
+
+        .cart-info { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 10px; }
+        
+        .cart-actions { display: flex; gap: 10px; width: 100%; }
+
+        .checkout-btn { flex: 2; background: var(--highlight); color: var(--dark); border: none; padding: 12px; border-radius: 15px; font-weight: 800; cursor: pointer; }
+        .cancel-btn { flex: 1; background: var(--danger); color: white; border: none; padding: 12px; border-radius: 15px; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <header>
     <h1 class="logo">SUSARA CAFFE</h1>
-    <div class="sub-logo">TEA ESTATE • BAGLUNG</div>
+    <div class="sub-logo">• BAGLUNG</div>
 </header>
 
 <div class="container">
     <div class="table-input-section">
-        <label for="table-number">ENTER TABLE NO:</label>
-        <input type="number" id="table-number" placeholder="Eg: 5" min="1">
+        <label for="table-number">TABLE NO (Max 2 Digits):</label>
+        <input type="number" id="table-number" placeholder="00" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);">
     </div>
 
     <div class="section-title">COFFEE & HOT DRINKS</div>
@@ -117,8 +123,14 @@
 </div>
 
 <div id="cart-bar">
-    <div>Items: <span id="cart-count">0</span> | Total: <b>Rs. <span id="cart-total">0</span></b></div>
-    <button class="checkout-btn" onclick="sendToManager()">SEND ORDER</button>
+    <div class="cart-info">
+        <span>Items: <b id="cart-count">0</b></span>
+        <span>Total: <b>Rs. <span id="cart-total">0</span></b></span>
+    </div>
+    <div class="cart-actions">
+        <button class="cancel-btn" onclick="clearOrder()">CANCEL</button>
+        <button class="checkout-btn" onclick="sendToManager()">SEND ORDER</button>
+    </div>
 </div>
 
 <script>
@@ -129,9 +141,7 @@
             {n: "Honey Latte", p: 200}, {n: "Lungo", p: 150}, {n: "Mocaccino", p: 180},
             {n: "Hot Chocolate", p: 200}, {n: "Hot Lemon with Honey", p: 100}
         ],
-        tea: [
-            {n: "Lemon Tea", p: 60}, {n: "Green Tea", p: 50}, {n: "Black Tea", p: 50}
-        ],
+        tea: [ {n: "Lemon Tea", p: 60}, {n: "Green Tea", p: 50}, {n: "Black Tea", p: 50} ],
         breakfast: [
             {n: "Chana", p: 80}, {n: "Boiled Egg", p: 40}, {n: "Parauta", p: 100},
             {n: "Puri Tarkari", p: 120}, {n: "Sel Roti", p: 50}, {n: "Omelette", p: 100},
@@ -189,9 +199,26 @@
     function addToCart(name, price) {
         cart.push(name);
         total += price;
-        document.getElementById('cart-bar').style.display = 'flex';
-        document.getElementById('cart-count').innerText = cart.length;
-        document.getElementById('cart-total').innerText = total;
+        updateCartDisplay();
+    }
+
+    function updateCartDisplay() {
+        const bar = document.getElementById('cart-bar');
+        if (cart.length > 0) {
+            bar.style.display = 'flex';
+            document.getElementById('cart-count').innerText = cart.length;
+            document.getElementById('cart-total').innerText = total;
+        } else {
+            bar.style.display = 'none';
+        }
+    }
+
+    function clearOrder() {
+        if(confirm("Are you sure you want to clear your entire order?")) {
+            cart = [];
+            total = 0;
+            updateCartDisplay();
+        }
     }
 
     function sendToManager() {
@@ -199,13 +226,12 @@
         const tableNum = document.getElementById('table-number').value || "Not Specified";
         
         if(tableNum === "Not Specified") {
-            const confirmOrder = confirm("You haven't entered a Table Number. Proceed anyway?");
+            const confirmOrder = confirm("Table Number is missing. Send order anyway?");
             if(!confirmOrder) return;
         }
 
         const orderSummary = cart.join(", ");
         const text = encodeURIComponent(`*NEW ORDER - SUSARA CAFFE*\n--------------------------\n📍 *TABLE NO: ${tableNum}*\n--------------------------\nItems: ${orderSummary}\n\n*TOTAL: Rs. ${total}*`);
-        
         window.open(`https://wa.me/${phone}?text=${text}`);
     }
 
