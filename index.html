@@ -15,7 +15,7 @@
             --danger: #e63946;
         }
 
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--dark); padding-bottom: 160px; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--dark); padding-bottom: 220px; }
         
         header { 
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80');
@@ -42,13 +42,11 @@
             justify-content: space-between;
         }
 
-        .table-input-section label { font-weight: 800; color: var(--dark); }
-        
         #table-number {
             padding: 10px;
             border-radius: 8px;
             border: 1px solid var(--primary);
-            width: 80px;
+            width: 60px;
             font-size: 1rem;
             text-align: center;
             font-weight: bold;
@@ -70,16 +68,18 @@
         .momo-table th { background: var(--primary); color: white; }
         .momo-btn { background: #f0ebe9; border: none; padding: 6px; border-radius: 5px; cursor: pointer; font-weight: 700; width: 100%; }
 
+        /* Fixed Cart Bar */
         #cart-bar { 
             position: fixed; bottom: 20px; left: 10px; right: 10px; background: var(--dark); 
-            color: white; padding: 15px; border-radius: 25px; display: none; 
-            flex-direction: column; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 1000;
+            color: white; padding: 20px; border-radius: 25px; display: none; 
+            flex-direction: column; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 1000;
         }
 
-        .cart-info { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 0 10px; }
-        
-        .cart-actions { display: flex; gap: 10px; width: 100%; }
+        .order-preview { font-size: 0.85rem; max-height: 80px; overflow-y: auto; color: #ccc; border-bottom: 1px solid #444; padding-bottom: 8px; }
 
+        .cart-summary { display: flex; justify-content: space-between; font-weight: 800; font-size: 1rem; }
+        
+        .cart-actions { display: flex; gap: 10px; }
         .checkout-btn { flex: 2; background: var(--highlight); color: var(--dark); border: none; padding: 12px; border-radius: 15px; font-weight: 800; cursor: pointer; }
         .cancel-btn { flex: 1; background: var(--danger); color: white; border: none; padding: 12px; border-radius: 15px; font-weight: 600; cursor: pointer; }
     </style>
@@ -88,12 +88,12 @@
 
 <header>
     <h1 class="logo">SUSARA CAFFE</h1>
-    <div class="sub-logo">• BAGLUNG</div>
+    <div class="sub-logo">TEA ESTATE • BAGLUNG</div>
 </header>
 
 <div class="container">
     <div class="table-input-section">
-        <label for="table-number">TABLE NO (Max 2 Digits):</label>
+        <label style="font-weight:800">TABLE NO (01-99):</label>
         <input type="number" id="table-number" placeholder="00" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);">
     </div>
 
@@ -123,9 +123,10 @@
 </div>
 
 <div id="cart-bar">
-    <div class="cart-info">
-        <span>Items: <b id="cart-count">0</b></span>
-        <span>Total: <b>Rs. <span id="cart-total">0</span></b></span>
+    <div class="order-preview" id="order-preview"></div>
+    <div class="cart-summary">
+        <span>Items: <span id="cart-count">0</span></span>
+        <span>Total: Rs. <span id="cart-total">0</span></span>
     </div>
     <div class="cart-actions">
         <button class="cancel-btn" onclick="clearOrder()">CANCEL</button>
@@ -197,42 +198,54 @@
     }
 
     function addToCart(name, price) {
-        cart.push(name);
+        cart.push({name, price});
         total += price;
         updateCartDisplay();
     }
 
     function updateCartDisplay() {
         const bar = document.getElementById('cart-bar');
+        const preview = document.getElementById('order-preview');
         if (cart.length > 0) {
             bar.style.display = 'flex';
             document.getElementById('cart-count').innerText = cart.length;
             document.getElementById('cart-total').innerText = total;
+            preview.innerText = cart.map(i => `${i.name}`).join(", ");
         } else {
             bar.style.display = 'none';
         }
     }
 
     function clearOrder() {
-        if(confirm("Are you sure you want to clear your entire order?")) {
-            cart = [];
-            total = 0;
+        if(confirm("Clear order?")) {
+            cart = []; total = 0;
             updateCartDisplay();
         }
     }
 
     function sendToManager() {
         const phone = "9779849957082";
-        const tableNum = document.getElementById('table-number').value || "Not Specified";
+        const table = document.getElementById('table-number').value;
         
-        if(tableNum === "Not Specified") {
-            const confirmOrder = confirm("Table Number is missing. Send order anyway?");
-            if(!confirmOrder) return;
+        if(!table || table.length > 2) {
+            alert("Please enter a valid 2-digit Table Number first!");
+            return;
         }
 
-        const orderSummary = cart.join(", ");
-        const text = encodeURIComponent(`*NEW ORDER - SUSARA CAFFE*\n--------------------------\n📍 *TABLE NO: ${tableNum}*\n--------------------------\nItems: ${orderSummary}\n\n*TOTAL: Rs. ${total}*`);
-        window.open(`https://wa.me/${phone}?text=${text}`);
+        // Message formatted to look like a fixed receipt
+        let receipt = `*--- SUSARA CAFFE RECEIPT ---*\n`;
+        receipt += `📍 TABLE NO: ${table}\n`;
+        receipt += `📅 DATE: ${new Date().toLocaleDateString()}\n`;
+        receipt += `------------------------------\n`;
+        cart.forEach((item, index) => {
+            receipt += `${index + 1}. ${item.name} - Rs.${item.price}\n`;
+        });
+        receipt += `------------------------------\n`;
+        receipt += `*GRAND TOTAL: Rs. ${total}*\n`;
+        receipt += `------------------------------\n`;
+        receipt += `_Sent via Susara Digital Menu_`;
+
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(receipt)}`);
     }
 
     window.onload = () => {
