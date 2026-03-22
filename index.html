@@ -68,7 +68,6 @@
         .momo-table th { background: var(--primary); color: white; }
         .momo-btn { background: #f0ebe9; border: none; padding: 6px; border-radius: 5px; cursor: pointer; font-weight: 700; width: 100%; }
 
-        /* Fixed Cart Bar */
         #cart-bar { 
             position: fixed; bottom: 20px; left: 10px; right: 10px; background: var(--dark); 
             color: white; padding: 20px; border-radius: 25px; display: none; 
@@ -76,9 +75,7 @@
         }
 
         .order-preview { font-size: 0.85rem; max-height: 80px; overflow-y: auto; color: #ccc; border-bottom: 1px solid #444; padding-bottom: 8px; }
-
         .cart-summary { display: flex; justify-content: space-between; font-weight: 800; font-size: 1rem; }
-        
         .cart-actions { display: flex; gap: 10px; }
         .checkout-btn { flex: 2; background: var(--highlight); color: var(--dark); border: none; padding: 12px; border-radius: 15px; font-weight: 800; cursor: pointer; }
         .cancel-btn { flex: 1; background: var(--danger); color: white; border: none; padding: 12px; border-radius: 15px; font-weight: 600; cursor: pointer; }
@@ -88,7 +85,7 @@
 
 <header>
     <h1 class="logo">SUSARA CAFFE</h1>
-    <div class="sub-logo">TEA ESTATE • BAGLUNG</div>
+    <div class="sub-logo">• BAGLUNG</div>
 </header>
 
 <div class="container">
@@ -103,22 +100,28 @@
     <div class="section-title">TEA ESTATE SELECTION</div>
     <div class="menu-grid" id="tea-list"></div>
 
+    <div class="section-title">BREAKFAST & QUICK BITES</div>
+    <div id="breakfast-list" class="menu-grid"></div>
+
     <div class="section-title">MOMO SPECIALS</div>
     <table class="momo-table">
         <thead><tr><th>TYPE</th><th>STM</th><th>FRY</th><th>JHL</th><th>CHL</th></tr></thead>
         <tbody id="momo-list"></tbody>
     </table>
 
+    <div class="section-title">CHOWMEIN & THUKPA</div>
+    <div id="noodle-list" class="menu-grid"></div>
+
     <div class="section-title">SANDWICH & BURGERS</div>
     <div id="sandwich-list" class="menu-grid"></div>
 
-    <div class="section-title">BREAKFAST & QUICK BITES</div>
-    <div id="breakfast-list" class="menu-grid"></div>
+    <div class="section-title">COMBO ITEMS</div>
+    <div id="combo-list" class="menu-grid"></div>
 
     <div class="section-title">SNACKS & SIDES</div>
     <div id="snacks-list" class="menu-grid"></div>
 
-    <div class="section-title">LASSI & COLD DRINKS</div>
+    <div class="section-title">LASSI & SALAD</div>
     <div id="lassi-list" class="menu-grid"></div>
 </div>
 
@@ -138,33 +141,40 @@
     const menuData = {
         coffee: [
             {n: "Ristretto", p: 100}, {n: "Espresso", p: 100}, {n: "Doppio", p: 150},
-            {n: "Americano", p: 130}, {n: "Cappuccino", p: 150}, {n: "Café Latte", p: 180},
-            {n: "Honey Latte", p: 200}, {n: "Lungo", p: 150}, {n: "Mocaccino", p: 180},
-            {n: "Hot Chocolate", p: 200}, {n: "Hot Lemon with Honey", p: 100}
+            {n: "Americano", p: 130}, {n: "Cappuccino", p: 150}, {n: "Café Latte", p: 200},
+            {n: "Honey Latte", p: 220}, {n: "Lungo", p: 160}, {n: "Mocaccino", p: 180},
+            {n: "Flat White", p: 180}, {n: "Hot Chocolate", p: 200}, {n: "Hot Lemon with Honey", p: 100}
         ],
         tea: [ {n: "Lemon Tea", p: 60}, {n: "Green Tea", p: 50}, {n: "Black Tea", p: 50} ],
         breakfast: [
-            {n: "Chana", p: 80}, {n: "Boiled Egg", p: 40}, {n: "Parauta", p: 100},
-            {n: "Puri Tarkari", p: 120}, {n: "Sel Roti", p: 50}, {n: "Omelette", p: 100},
-            {n: "Bread Omelette", p: 120}
+            {n: "Chana Tarkari", p: 80}, {n: "Chana Anda", p: 120}, 
+            {n: "Samosa Tarkari", p: 120}, {n: "Lachha Paratha Tarkari", p: 110}, 
+            {n: "Boiled Egg", p: 40}, {n: "Parauta", p: 100}, {n: "Puri Tarkari", p: 120}, 
+            {n: "Sel Roti", p: 50}, {n: "Omelette", p: 100}, {n: "Bread Omelette", p: 120}
+        ],
+        momo: [
+            {t: "Veg", s: 130, f: 160, j: 190, c: 220},
+            {t: "Chicken", s: 150, f: 200, j: 220, c: 250},
+            {t: "Banana", s: 150, f: 200, j: 220, c: 250},
+            {t: "Fish", s: 200, f: 250, j: 280, c: 300}
+        ],
+        noodle: [
+            {n: "Veg Chowmein", p: 120}, {n: "Chicken Chowmein", p: 180}, {n: "Egg Chowmein", p: 150}, {n: "Mix Chowmein", p: 250},
+            {n: "Veg Thukpa", p: 180}, {n: "Chicken Thukpa", p: 230}, {n: "Egg Thukpa", p: 210}, {n: "Mix Thukpa", p: 250}
         ],
         sandwich: [
-            {n: "Veg Sandwich", p: 150}, {n: "Egg Sandwich", p: 180}, {n: "Chicken Sandwich", p: 200},
-            {n: "Mix Sandwich", p: 250}, {n: "Chicken Burger", p: 250}, {n: "Mix Burger", p: 300},
-            {n: "Veg Katti Roll", p: 180}, {n: "Chicken Katti Roll", p: 250}
+            {n: "Veg Sandwich", p: 150}, {n: "Egg Sandwich", p: 190}, {n: "Chicken Sandwich", p: 220}, {n: "Mix Sandwich", p: 250},
+            {n: "Chicken Burger", p: 250}, {n: "Mix Burger", p: 300}, {n: "Veg Katti Roll", p: 180}, {n: "Chicken Katti Roll", p: 250}
         ],
+        combo: [ {n: "Veg Combo", p: 200}, {n: "Chicken Combo", p: 250}, {n: "Mix Combo", p: 280} ],
         snacks: [
             {n: "Sausage", p: 220}, {n: "Chicken Chilly", p: 300}, {n: "Chicken Fry", p: 300},
             {n: "Chicken Wings", p: 350}, {n: "Chicken Lollipop", p: 300}, {n: "French Fry", p: 200},
             {n: "Peanut Sadeko", p: 150}, {n: "Badmas Sadeko", p: 150}
         ],
         lassi: [
-            {n: "Plain Lassi", p: 100}, {n: "Banana Lassi", p: 120}, {n: "Chocolate Lassi", p: 150}, {n: "Mix Lassi", p: 150}
-        ],
-        momo: [
-            {t: "Veg", s: 150, f: 200, j: 210, c: 250},
-            {t: "Chicken", s: 180, f: 250, j: 280, c: 280},
-            {t: "Banana", s: 150, f: 200, j: 210, c: 210}
+            {n: "Plain Lassi", p: 120}, {n: "Banana Lassi", p: 150}, {n: "Mix Lassi", p: 180}, {n: "Chocolate Lassi", p: 150},
+            {n: "Green Salad", p: 150}, {n: "Mix Salad", p: 250}
         ]
     };
 
@@ -226,13 +236,11 @@
     function sendToManager() {
         const phone = "9779849957082";
         const table = document.getElementById('table-number').value;
-        
         if(!table || table.length > 2) {
-            alert("Please enter a valid 2-digit Table Number first!");
+            alert("Please enter a valid 2-digit Table Number!");
             return;
         }
 
-        // Message formatted to look like a fixed receipt
         let receipt = `*--- SUSARA CAFFE RECEIPT ---*\n`;
         receipt += `📍 TABLE NO: ${table}\n`;
         receipt += `📅 DATE: ${new Date().toLocaleDateString()}\n`;
@@ -252,7 +260,9 @@
         renderItems('coffee-list', menuData.coffee);
         renderItems('tea-list', menuData.tea);
         renderItems('breakfast-list', menuData.breakfast);
+        renderItems('noodle-list', menuData.noodle);
         renderItems('sandwich-list', menuData.sandwich);
+        renderItems('combo-list', menuData.combo);
         renderItems('snacks-list', menuData.snacks);
         renderItems('lassi-list', menuData.lassi);
         renderMomo();
