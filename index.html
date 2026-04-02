@@ -13,95 +13,130 @@
             --dark: #1a1a1a;
             --card: #ffffff;
             --danger: #e63946;
+            --success: #2a9d8f;
+            --whatsapp: #25D366;
         }
 
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--dark); padding-bottom: 220px; }
+        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); color: var(--dark); padding-bottom: 280px; }
         
         header { 
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80');
-            background-size: cover; background-position: center; color: white; padding: 40px 20px; text-align: center;
+            background-size: cover; background-position: center; color: white; padding: 30px 20px; text-align: center;
         }
 
-        .logo { font-family: 'Syncopate'; font-size: 1.5rem; letter-spacing: 2px; margin: 0; }
-        .sub-logo { font-size: 0.8rem; opacity: 0.8; letter-spacing: 4px; }
+        .logo { font-family: 'Syncopate'; font-size: 1.4rem; letter-spacing: 2px; margin: 0; }
+        .sub-logo { font-size: 0.75rem; opacity: 0.8; letter-spacing: 4px; }
 
-        .container { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .container { padding: 15px; max-width: 800px; margin: 0 auto; }
         
         .section-title { 
             color: var(--primary); border-bottom: 2px solid var(--highlight); 
-            display: inline-block; margin: 30px 0 15px; font-size: 1.1rem; font-weight: 800;
+            display: inline-block; margin: 25px 0 10px; font-size: 1rem; font-weight: 800;
         }
 
         .table-input-section {
             background: var(--highlight);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 12px; border-radius: 12px; margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: space-between;
         }
 
         #table-number {
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid var(--primary);
-            width: 60px;
-            font-size: 1rem;
-            text-align: center;
-            font-weight: bold;
+            padding: 8px; border-radius: 8px; border: 1px solid var(--primary);
+            width: 50px; font-size: 1rem; text-align: center; font-weight: bold;
         }
 
-        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
         .item-card { 
-            background: var(--card); padding: 15px; border-radius: 12px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;
+            background: var(--card); padding: 12px; border-radius: 10px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;
         }
 
-        .item-info h4 { margin: 0; font-size: 1rem; }
-        .item-info p { margin: 5px 0 0; color: var(--primary); font-weight: 700; }
+        .item-info h4 { margin: 0; font-size: 0.95rem; }
+        .item-info p { margin: 3px 0 0; color: var(--primary); font-weight: 700; font-size: 0.85rem; }
 
-        .add-btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+        .add-btn { background: var(--primary); color: white; border: none; padding: 6px 14px; border-radius: 15px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
 
-        .momo-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; font-size: 0.85rem; }
-        .momo-table th, .momo-table td { padding: 10px; text-align: center; border: 1px solid #eee; }
+        .momo-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; font-size: 0.8rem; }
+        .momo-table th, .momo-table td { padding: 8px; text-align: center; border: 1px solid #eee; }
         .momo-table th { background: var(--primary); color: white; }
-        .momo-btn { background: #f0ebe9; border: none; padding: 6px; border-radius: 5px; cursor: pointer; font-weight: 700; width: 100%; }
+        .momo-btn { background: #f0ebe9; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-weight: 700; width: 100%; }
 
+        /* Navigation Bar */
         #cart-bar { 
-            position: fixed; bottom: 20px; left: 10px; right: 10px; background: var(--dark); 
-            color: white; padding: 20px; border-radius: 25px; display: none; 
-            flex-direction: column; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 1000;
+            position: fixed; bottom: 15px; left: 10px; right: 10px; background: var(--dark); 
+            color: white; padding: 15px; border-radius: 20px; display: none; 
+            flex-direction: column; gap: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); z-index: 1000;
         }
 
-        .order-preview { font-size: 0.85rem; max-height: 80px; overflow-y: auto; color: #ccc; border-bottom: 1px solid #444; padding-bottom: 8px; }
-        .cart-summary { display: flex; justify-content: space-between; font-weight: 800; font-size: 1rem; }
-        .cart-actions { display: flex; gap: 10px; }
-        .checkout-btn { flex: 2; background: var(--highlight); color: var(--dark); border: none; padding: 12px; border-radius: 15px; font-weight: 800; cursor: pointer; }
-        .cancel-btn { flex: 1; background: var(--danger); color: white; border: none; padding: 12px; border-radius: 15px; font-weight: 600; cursor: pointer; }
+        .order-preview { font-size: 0.8rem; max-height: 50px; overflow-y: auto; color: #ccc; border-bottom: 1px solid #444; padding-bottom: 5px; }
+        .cart-summary { display: flex; justify-content: space-between; font-weight: 800; font-size: 0.95rem; }
+        
+        .cart-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .send-btn { grid-column: span 2; background: var(--whatsapp); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; cursor: pointer; }
+        .print-btn { background: var(--success); color: white; border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+        .cancel-btn { background: var(--danger); color: white; border: none; padding: 10px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+
+        /* PRINT STYLES - COMPACT 58mm PAPER */
+        #printable-receipt { display: none; }
+
+        @media print {
+            @page { size: 58mm auto; margin: 0; }
+            body * { visibility: hidden; }
+            #printable-receipt, #printable-receipt * { visibility: visible; }
+            #printable-receipt { 
+                display: block !important; position: absolute; left: 0; top: 0; width: 100%;
+                padding: 5px; font-family: 'Courier New', Courier, monospace; 
+                font-size: 11px; line-height: 1.1; color: black; background: white;
+            }
+            .receipt-row { display: flex; justify-content: space-between; margin: 2px 0; }
+            hr { border: none; border-top: 1px dashed black; margin: 5px 0; }
+        }
     </style>
 </head>
 <body>
 
-<header>
+<div id="printable-receipt">
+    <center>
+        <h3 style="margin: 0;">SUSARA CAFFE</h3>
+        <p style="margin: 2px 0;">Tea Estate, Baglung</p>
+        <hr>
+        <p style="font-weight: bold; margin: 4px 0;">ORDER RECEIPT</p>
+    </center>
+    <div class="receipt-row"><span>TABLE:</span> <span id="p-table"></span></div>
+    <div class="receipt-row"><span>TIME:</span> <span id="p-date"></span></div>
+    <hr>
+    <div id="p-items-list"></div>
+    <hr>
+    <div class="receipt-row" style="font-weight: bold; font-size: 13px;">
+        <span>TOTAL:</span>
+        <span>Rs.<span id="p-total"></span></span>
+    </div>
+    <br>
+    <center>
+        <p>Thank You!</p>
+        <p style="font-size: 8px;">Create By Anup Giri</p>
+    </center>
+</div>
+
+<header class="no-print">
     <h1 class="logo">SUSARA CAFFE</h1>
-    <div class="sub-logo">• BAGLUNG</div>
+    <div class="sub-logo">TEA ESTATE • BAGLUNG</div>
 </header>
 
-<div class="container">
+<div class="container no-print">
     <div class="table-input-section">
-        <label style="font-weight:800">TABLE NO (01-99):</label>
-        <input type="number" id="table-number" placeholder="00" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);">
+        <label style="font-weight:800">TABLE NO:</label>
+        <input type="number" id="table-number" value="1">
     </div>
 
     <div class="section-title">COFFEE & HOT DRINKS</div>
     <div class="menu-grid" id="coffee-list"></div>
 
-    <div class="section-title">TEA ESTATE SELECTION</div>
+    <div class="section-title">TEA SELECTION</div>
     <div class="menu-grid" id="tea-list"></div>
 
-    <div class="section-title">BREAKFAST & QUICK BITES</div>
-    <div id="breakfast-list" class="menu-grid"></div>
+    <div class="section-title">BREAKFAST & EGGS</div>
+    <div class="menu-grid" id="breakfast-list"></div>
 
     <div class="section-title">MOMO SPECIALS</div>
     <table class="momo-table">
@@ -110,30 +145,30 @@
     </table>
 
     <div class="section-title">CHOWMEIN & THUKPA</div>
-    <div id="noodle-list" class="menu-grid"></div>
+    <div class="menu-grid" id="noodle-list"></div>
 
     <div class="section-title">SANDWICH & BURGERS</div>
-    <div id="sandwich-list" class="menu-grid"></div>
-
-    <div class="section-title">COMBO ITEMS</div>
-    <div id="combo-list" class="menu-grid"></div>
+    <div class="menu-grid" id="sandwich-list"></div>
 
     <div class="section-title">SNACKS & SIDES</div>
-    <div id="snacks-list" class="menu-grid"></div>
+    <div class="menu-grid" id="snacks-list"></div>
 
-    <div class="section-title">LASSI & SALAD</div>
-    <div id="lassi-list" class="menu-grid"></div>
+    <div class="section-title">LASSI & SALADS</div>
+    <div class="menu-grid" id="lassi-list"></div>
+
+    <footer style="margin-top: 30px;">DIGITAL MENU BY ANUP GIRI</footer>
 </div>
 
-<div id="cart-bar">
+<div id="cart-bar" class="no-print">
     <div class="order-preview" id="order-preview"></div>
     <div class="cart-summary">
         <span>Items: <span id="cart-count">0</span></span>
         <span>Total: Rs. <span id="cart-total">0</span></span>
     </div>
     <div class="cart-actions">
+        <button class="send-btn" onclick="sendToManager()">1. SEND TO WHATSAPP</button>
+        <button class="print-btn" onclick="preparePrint()">2. PRINT RECEIPT</button>
         <button class="cancel-btn" onclick="clearOrder()">CANCEL</button>
-        <button class="checkout-btn" onclick="sendToManager()">SEND ORDER</button>
     </div>
 </div>
 
@@ -141,131 +176,95 @@
     const menuData = {
         coffee: [
             {n: "Ristretto", p: 100}, {n: "Espresso", p: 100}, {n: "Doppio", p: 150},
-            {n: "Americano", p: 130}, {n: "Cappuccino", p: 150}, {n: "Café Latte", p: 200},
-            {n: "Honey Latte", p: 220}, {n: "Lungo", p: 160}, {n: "Mocaccino", p: 180},
-            {n: "Flat White", p: 180}, {n: "Hot Chocolate", p: 200}, {n: "Hot Lemon with Honey", p: 100}
+            {n: "Americano", p: 130}, {n: "Cappuccino", p: 150}, {n: "Café Latte", p: 180},
+            {n: "Honey Latte", p: 200}, {n: "Lungo", p: 150}, {n: "Mocaccino", p: 180},
+            {n: "Flat White", p: 180}, {n: "Hot Chocolate", p: 200}, {n: "Hot Lemon Honey", p: 100}
         ],
-        tea: [ {n: "Lemon Tea", p: 60}, {n: "Green Tea", p: 50}, {n: "Black Tea", p: 50} ],
+        tea: [
+            {n: "Lemon Tea", p: 60}, {n: "Green Tea", p: 50}, {n: "Black Tea", p: 50}, {n: "Milk Tea", p: 40}
+        ],
         breakfast: [
-            {n: "Chana Tarkari", p: 80}, {n: "Chana Anda", p: 120}, 
-            {n: "Samosa Tarkari", p: 120}, {n: "Lachha Paratha Tarkari", p: 110}, 
-            {n: "Boiled Egg", p: 40}, {n: "Parauta", p: 100}, {n: "Puri Tarkari", p: 120}, 
-            {n: "Sel Roti", p: 50}, {n: "Omelette", p: 100}, {n: "Bread Omelette", p: 120}
+            {n: "Chana Tarkari", p: 80}, {n: "Chana Anda", p: 120}, {n: "Samosa Tarkari", p: 120},
+            {n: "Lachha Paratha", p: 110}, {n: "Boiled Egg", p: 40}, {n: "Puri Tarkari", p: 120},
+            {n: "Omelette", p: 100}, {n: "Bread Omelette", p: 120}, {n: "Sel Roti", p: 50}
         ],
         momo: [
-            {t: "Veg", s: 130, f: 160, j: 190, c: 220},
-            {t: "Chicken", s: 150, f: 200, j: 220, c: 250},
-            {t: "Banana", s: 150, f: 200, j: 220, c: 250},
-            {t: "Fish", s: 200, f: 250, j: 280, c: 300}
+            {t: "Veg", s: 150, f: 200, j: 210, c: 250},
+            {t: "Chicken", s: 180, f: 250, j: 280, c: 280},
+            {t: "Banana", s: 150, f: 200, j: 210, c: 210}
         ],
         noodle: [
-            {n: "Veg Chowmein", p: 120}, {n: "Chicken Chowmein", p: 180}, {n: "Egg Chowmein", p: 150}, {n: "Mix Chowmein", p: 250},
-            {n: "Veg Thukpa", p: 180}, {n: "Chicken Thukpa", p: 230}, {n: "Egg Thukpa", p: 210}, {n: "Mix Thukpa", p: 250}
+            {n: "Veg Chowmein", p: 100}, {n: "Chicken Chowmein", p: 180}, {n: "Egg Chowmein", p: 150},
+            {n: "Veg Thukpa", p: 180}, {n: "Chicken Thukpa", p: 230}, {n: "Mix Chowmein", p: 250}
         ],
         sandwich: [
-            {n: "Veg Sandwich", p: 150}, {n: "Egg Sandwich", p: 190}, {n: "Chicken Sandwich", p: 220}, {n: "Mix Sandwich", p: 250},
-            {n: "Chicken Burger", p: 250}, {n: "Mix Burger", p: 300}, {n: "Veg Katti Roll", p: 180}, {n: "Chicken Katti Roll", p: 250}
+            {n: "Veg Sandwich", p: 150}, {n: "Chicken Sandwich", p: 200}, {n: "Chicken Burger", p: 250},
+            {n: "Veg Burger", p: 200}, {n: "Chicken Katti Roll", p: 250}
         ],
-        combo: [ {n: "Veg Combo", p: 200}, {n: "Chicken Combo", p: 250}, {n: "Mix Combo", p: 280} ],
         snacks: [
             {n: "Sausage", p: 220}, {n: "Chicken Chilly", p: 300}, {n: "Chicken Fry", p: 300},
-            {n: "Chicken Wings", p: 350}, {n: "Chicken Lollipop", p: 300}, {n: "French Fry", p: 200},
-            {n: "Peanut Sadeko", p: 150}, {n: "Bhatmas Sadeko", p: 150}
+            {n: "French Fry", p: 200}, {n: "Peanut Sadeko", p: 150}, {n: "Badmas Sadeko", p: 150}
         ],
         lassi: [
-            {n: "Plain Lassi", p: 120}, {n: "Banana Lassi", p: 150}, {n: "Mix Lassi", p: 180}, {n: "Chocolate Lassi", p: 150},
+            {n: "Plain Lassi", p: 100}, {n: "Banana Lassi", p: 120}, {n: "Chocolate Lassi", p: 150},
             {n: "Green Salad", p: 150}, {n: "Mix Salad", p: 250}
         ]
     };
 
-    let cart = [];
-    let total = 0;
+    let cart = []; let total = 0;
 
     function renderItems(id, data) {
         const container = document.getElementById(id);
         if(!container) return;
-        data.forEach(item => {
-            container.innerHTML += `
-                <div class="item-card">
-                    <div class="item-info"><h4>${item.n}</h4><p>Rs. ${item.p}</p></div>
-                    <button class="add-btn" onclick="addToCart('${item.n}', ${item.p})">ADD</button>
-                </div>`;
+        data.forEach(i => {
+            container.innerHTML += `<div class="item-card"><div><h4>${i.n}</h4><p>Rs.${i.p}</p></div><button class="add-btn" onclick="addToCart('${i.n}', ${i.p})">ADD</button></div>`;
         });
     }
 
     function renderMomo() {
         const container = document.getElementById('momo-list');
         menuData.momo.forEach(m => {
-            container.innerHTML += `
-                <tr>
-                    <td><b>${m.t}</b></td>
-                    <td><button class="momo-btn" onclick="addToCart('${m.t} Stm', ${m.s})">${m.s}</button></td>
-                    <td><button class="momo-btn" onclick="addToCart('${m.t} Fry', ${m.f})">${m.f}</button></td>
-                    <td><button class="momo-btn" onclick="addToCart('${m.t} Jhl', ${m.j})">${m.j}</button></td>
-                    <td><button class="momo-btn" onclick="addToCart('${m.t} Chl', ${m.c})">${m.c}</button></td>
-                </tr>`;
+            container.innerHTML += `<tr><td><b>${m.t}</b></td><td><button class="momo-btn" onclick="addToCart('${m.t} Stm', ${m.s})">${m.s}</button></td><td><button class="momo-btn" onclick="addToCart('${m.t} Fry', ${m.f})">${m.f}</button></td><td><button class="momo-btn" onclick="addToCart('${m.t} Jhl', ${m.j})">${m.j}</button></td><td><button class="momo-btn" onclick="addToCart('${m.t} Chl', ${m.c})">${m.c}</button></td></tr>`;
         });
     }
 
-    function addToCart(name, price) {
-        cart.push({name, price});
-        total += price;
-        updateCartDisplay();
-    }
+    function addToCart(n, p) { cart.push({n, p}); total += p; updateUI(); }
 
-    function updateCartDisplay() {
+    function updateUI() {
         const bar = document.getElementById('cart-bar');
-        const preview = document.getElementById('order-preview');
         if (cart.length > 0) {
             bar.style.display = 'flex';
             document.getElementById('cart-count').innerText = cart.length;
             document.getElementById('cart-total').innerText = total;
-            preview.innerText = cart.map(i => `${i.name}`).join(", ");
-        } else {
-            bar.style.display = 'none';
-        }
+            document.getElementById('order-preview').innerText = cart.map(i => i.n).join(", ");
+        } else { bar.style.display = 'none'; }
     }
 
-    function clearOrder() {
-        if(confirm("Clear order?")) {
-            cart = []; total = 0;
-            updateCartDisplay();
-        }
+    function clearOrder() { if(confirm("Clear order?")) { cart = []; total = 0; updateUI(); } }
+
+    function preparePrint() {
+        const table = document.getElementById('table-number').value || "1";
+        document.getElementById('p-table').innerText = table;
+        document.getElementById('p-date').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        document.getElementById('p-total').innerText = total;
+        
+        const listDiv = document.getElementById('p-items-list');
+        listDiv.innerHTML = cart.map(i => `<div class="receipt-row"><span>${i.n}</span><span>Rs.${i.p}</span></div>`).join("");
+        
+        window.print();
     }
 
     function sendToManager() {
-        const phone = "9779849957082";
-        const table = document.getElementById('table-number').value;
-        if(!table || table.length > 2) {
-            alert("Please enter a valid 2-digit Table Number!");
-            return;
-        }
-
-        let receipt = `*--- SUSARA CAFFE RECEIPT ---*\n`;
-        receipt += `📍 TABLE NO: ${table}\n`;
-        receipt += `📅 DATE: ${new Date().toLocaleDateString()}\n`;
-        receipt += `------------------------------\n`;
-        cart.forEach((item, index) => {
-            receipt += `${index + 1}. ${item.name} - Rs.${item.price}\n`;
-        });
-        receipt += `------------------------------\n`;
-        receipt += `*GRAND TOTAL: Rs. ${total}*\n`;
-        receipt += `------------------------------\n`;
-        receipt += `_Sent via Susara Digital Menu_`;
-
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(receipt)}`);
+        const table = document.getElementById('table-number').value || "1";
+        let msg = `*NEW ORDER - SUSARA CAFFE*\nTable: ${table}\n----------------\n`;
+        cart.forEach((i, idx) => { msg += `${idx+1}. ${i.n} - Rs.${i.p}\n`; });
+        msg += `----------------\n*TOTAL: Rs.${total}*`;
+        window.open(`https://wa.me/9779849957082?text=${encodeURIComponent(msg)}`);
     }
 
-    window.onload = () => {
-        renderItems('coffee-list', menuData.coffee);
-        renderItems('tea-list', menuData.tea);
-        renderItems('breakfast-list', menuData.breakfast);
-        renderItems('noodle-list', menuData.noodle);
-        renderItems('sandwich-list', menuData.sandwich);
-        renderItems('combo-list', menuData.combo);
-        renderItems('snacks-list', menuData.snacks);
-        renderItems('lassi-list', menuData.lassi);
-        renderMomo();
+    window.onload = () => { 
+        Object.keys(menuData).forEach(key => { if(key !== 'momo') renderItems(key + '-list', menuData[key]); });
+        renderMomo(); 
     };
 </script>
 </body>
