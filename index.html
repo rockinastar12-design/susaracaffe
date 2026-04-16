@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Susara Caffe | Portable Billing</title>
+    <title>Susara Caffe | Dual Billing</title>
     <style>
         :root {
             --primary: #5d4037;
@@ -12,15 +12,15 @@
             --dark: #1a1a1a;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: var(--bg); padding-bottom: 250px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--bg); padding-bottom: 250px; }
         
-        /* UI Styles */
+        /* UI Styling */
         header { background: var(--primary); color: white; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
         .container { padding: 15px; max-width: 600px; margin: auto; }
         .table-input { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #ddd; }
         .table-input input { width: 60px; padding: 8px; font-size: 1.1rem; font-weight: bold; text-align: center; border: 2px solid var(--highlight); border-radius: 5px; }
 
-        .section-title { color: var(--primary); border-bottom: 2px solid var(--highlight); margin: 25px 0 10px; font-weight: 800; text-transform: uppercase; font-size: 0.9rem; }
+        .section-title { color: var(--primary); border-bottom: 2px solid var(--highlight); margin: 25px 0 10px; font-weight: 800; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
         
         .menu-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
         .item-card { background: white; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
@@ -33,66 +33,80 @@
         .momo-table td { padding: 8px 3px; text-align: center; border: 1px solid #eee; }
         .momo-btn { background: #f8f1ef; border: 1px solid #ddd; padding: 6px; border-radius: 4px; cursor: pointer; font-weight: 700; width: 100%; }
 
-        /* Floating Cart */
-        #cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark); color: white; padding: 20px; border-radius: 20px 20px 0 0; display: none; flex-direction: column; gap: 10px; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); }
+        /* Navigation Cart */
+        #cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark); color: white; padding: 20px; border-radius: 20px 20px 0 0; display: none; flex-direction: column; gap: 10px; z-index: 1000; }
         .cart-summary { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; }
         .cart-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .print-btn { grid-column: span 2; background: #2a9d8f; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; }
+        .print-btn { grid-column: span 2; background: #2a9d8f; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .clear-btn { background: #e63946; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; }
         .wa-btn { background: #25D366; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; }
 
-        /* THERMAL PRINTER RECEIPT (58mm) */
-        #thermal-receipt { display: none; }
+        /* THERMAL PRINT LOGIC (58mm) */
+        #thermal-wrapper { display: none; }
 
         @media print {
             @page { size: 58mm auto; margin: 0; }
             body * { visibility: hidden; }
-            #thermal-receipt, #thermal-receipt * { visibility: visible; }
-            #thermal-receipt { 
+            #thermal-wrapper, #thermal-wrapper * { visibility: visible; }
+            #thermal-wrapper { 
                 display: block !important; position: absolute; left: 0; top: 0; width: 54mm; 
-                padding: 2mm; font-family: 'Courier New', monospace; font-size: 12px; color: black; line-height: 1.2;
+                padding: 0; font-family: 'Courier New', monospace; font-size: 12px; color: black; line-height: 1.2;
             }
+            .receipt-sec { padding: 2mm; }
+            .cut-line { border-top: 1px dashed black; margin: 15px 0; text-align: center; position: relative; }
+            .cut-line:after { content: '✂ TEAR HERE'; font-size: 9px; position: absolute; top: -6px; left: 30%; background: white; padding: 0 5px; }
             .r-line { display: flex; justify-content: space-between; margin: 2px 0; }
             .r-center { text-align: center; }
             .r-dash { border-top: 1px dashed black; margin: 5px 0; }
-            .no-print { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-<div id="thermal-receipt">
-    <div class="r-center">
-        <strong style="font-size: 16px;">SUSARA CAFFE</strong><br>
-        Baglung<br>
+<div id="thermal-wrapper">
+    <div class="receipt-sec">
+        <div class="r-center">
+            <strong style="font-size: 16px;">SUSARA CAFFE</strong><br>
+            Tea Estate, Baglung<br>
+            <div class="r-dash"></div>
+            <strong>BILL RECEIPT</strong>
+        </div>
+        <div class="r-line"><span>Table:</span> <span class="rt-table"></span></div>
+        <div class="r-line"><span>Date:</span> <span class="rt-date"></span></div>
         <div class="r-dash"></div>
-        <strong>BILL RECEIPT</strong>
+        <div class="rt-items"></div>
+        <div class="r-dash"></div>
+        <div class="r-line" style="font-weight: bold; font-size: 14px;">
+            <span>TOTAL:</span>
+            <span>Rs.<span class="rt-total"></span></span>
+        </div>
+        <div class="r-dash"></div>
+        <div class="r-center" style="font-size: 10px;">Thank You! Visit Again.<br>By Anup Giri</div>
     </div>
-    <div class="r-line"><span>Table:</span> <span id="rt-table"></span></div>
-    <div class="r-line"><span>Date:</span> <span id="rt-date"></span></div>
-    <div class="r-dash"></div>
-    <div id="rt-items"></div>
-    <div class="r-dash"></div>
-    <div class="r-line" style="font-weight: bold; font-size: 14px;">
-        <span>TOTAL:</span>
-        <span>Rs.<span id="rt-total"></span></span>
-    </div>
-    <div class="r-dash"></div>
-    <div class="r-center" style="font-size: 10px;">
-        Thank You! Visit Again.<br>
-        System by Anup Giri
-    </div>
+
+    <div class="cut-line"></div>
+
+    <div class="receipt-sec">
+        <div class="r-center">
+            <strong style="font-size: 15px;">KITCHEN ORDER (KOT)</strong><br>
+            <div class="r-dash"></div>
+        </div>
+        <div class="r-line"><span>TABLE:</span> <strong style="font-size: 20px;" class="rt-table"></strong></div>
+        <div class="r-line"><span>TIME:</span> <span class="rt-date"></span></div>
+        <div class="r-dash"></div>
+        <div class="rt-items-kot"></div>
+        <div class="r-dash"></div>
+        <div class="r-center">*** Kitchen Copy ***</div>
+        <br><br><br> </div>
 </div>
 
 <div class="no-print">
     <header><h1>SUSARA CAFFE</h1></header>
-    
     <div class="container">
         <div class="table-input">
-            <strong>TABLE NUMBER:</strong>
+            <strong>TABLE NO:</strong>
             <input type="number" id="tbl-num" value="1">
         </div>
-
         <div id="menu-container"></div>
     </div>
 </div>
@@ -100,11 +114,11 @@
 <div id="cart-bar" class="no-print">
     <div id="cart-preview" style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px;"></div>
     <div class="cart-summary">
-        <span>Total Amount:</span>
+        <span>Total:</span>
         <span>Rs. <span id="total-amt">0</span></span>
     </div>
     <div class="cart-btns">
-        <button class="print-btn" onclick="doPrint()">PRINT THERMAL RECEIPT</button>
+        <button class="print-btn" onclick="doPrint()">PRINT BILL + KOT</button>
         <button class="wa-btn" onclick="sendWA()">WHATSAPP</button>
         <button class="clear-btn" onclick="clearCart()">CLEAR</button>
     </div>
@@ -118,10 +132,10 @@
             {n: "Honey Latte", p: 200}, {n: "Lungo", p: 150}, {n: "Mocaccino", p: 180},
             {n: "Flat White", p: 180}, {n: "Hot Chocolate", p: 200}, {n: "Hot Lemon Honey", p: 100}
         ],
-        "Tea & Others": [
+        "Tea Selection": [
             {n: "Lemon Tea", p: 60}, {n: "Green Tea", p: 50}, {n: "Black Tea", p: 50}, {n: "Milk Tea", p: 40}
         ],
-        "Breakfast": [
+        "Breakfast & Paratha": [
             {n: "Chana Tarkari", p: 80}, {n: "Chana Anda", p: 120}, {n: "Samosa Tarkari", p: 120},
             {n: "Lachha Paratha", p: 110}, {n: "Boiled Egg", p: 40}, {n: "Puri Tarkari", p: 120},
             {n: "Plain Omelette", p: 100}, {n: "Bread Omelette", p: 120}, {n: "Sel Roti", p: 50}
@@ -131,17 +145,16 @@
             {n: "Mix Chowmein", p: 250}, {n: "Veg Thukpa", p: 180}, {n: "Chicken Thukpa", p: 230},
             {n: "Egg Thukpa", p: 210}, {n: "Mix Thukpa", p: 250}
         ],
-        "Sandwich & Burgers": [
-            {n: "Veg Sandwich", p: 150}, {n: "Egg Sandwich", p: 180}, {n: "Chicken Sandwich", p: 200},
-            {n: "Mix Sandwich", p: 250}, {n: "Veg Burger", p: 200}, {n: "Chicken Burger", p: 250},
-            {n: "Mix Burger", p: 300}, {n: "Chicken Katti Roll", p: 250}
+        "Sandwich & Burger": [
+            {n: "Veg Sandwich", p: 150}, {n: "Chicken Sandwich", p: 200}, {n: "Veg Burger", p: 200},
+            {n: "Chicken Burger", p: 250}, {n: "Mix Burger", p: 300}, {n: "Chicken Katti Roll", p: 250}
         ],
-        "Snacks": [
+        "Snacks & Chilly": [
             {n: "Sausage (2pc)", p: 220}, {n: "Chicken Chilly", p: 300}, {n: "Chicken Fry", p: 300},
             {n: "Chicken Wings", p: 350}, {n: "French Fry", p: 200}, {n: "Peanut Sadeko", p: 150},
             {n: "Badmas Sadeko", p: 150}
         ],
-        "Lassi & Salads": [
+        "Lassi & Salad": [
             {n: "Plain Lassi", p: 100}, {n: "Banana Lassi", p: 120}, {n: "Chocolate Lassi", p: 150},
             {n: "Green Salad", p: 150}, {n: "Mix Salad", p: 250}
         ]
@@ -158,7 +171,6 @@
     function initMenu() {
         const container = document.getElementById('menu-container');
         
-        // Render Momo Table First
         container.innerHTML += `<div class="section-title">MOMO SPECIALS</div>
             <table class="momo-table">
                 <thead><tr><th>TYPE</th><th>STM</th><th>FRY</th><th>JHL</th><th>CHL</th></tr></thead>
@@ -176,7 +188,6 @@
             </tr>`;
         });
 
-        // Render other sections
         for (let cat in fullMenu) {
             container.innerHTML += `<div class="section-title">${cat}</div><div class="menu-grid" id="${cat.replace(/\s/g, '')}"></div>`;
             const grid = document.getElementById(cat.replace(/\s/g, ''));
@@ -200,12 +211,19 @@
     function clearCart() { cart = []; total = 0; document.getElementById('cart-bar').style.display = 'none'; }
 
     function doPrint() {
-        document.getElementById('rt-table').innerText = document.getElementById('tbl-num').value;
-        document.getElementById('rt-date').innerText = new Date().toLocaleString();
-        document.getElementById('rt-total').innerText = total;
+        const table = document.getElementById('tbl-num').value;
+        const dateTime = new Date().toLocaleString([], {hour: '2-digit', minute:'2-digit', day:'numeric', month:'short'});
         
-        const list = document.getElementById('rt-items');
-        list.innerHTML = cart.map(i => `<div class="r-line"><span>${i.n}</span><span>${i.p}</span></div>`).join("");
+        document.querySelectorAll('.rt-table').forEach(s => s.innerText = table);
+        document.querySelectorAll('.rt-date').forEach(s => s.innerText = dateTime);
+        document.querySelectorAll('.rt-total').forEach(s => s.innerText = total);
+        
+        // Customer Items
+        document.querySelector('.rt-items').innerHTML = cart.map(i => `<div class="r-line"><span>${i.n}</span><span>${i.p}</span></div>`).join("");
+        
+        // Kitchen Items (No prices, bullet points)
+        document.querySelector('.rt-items-kot').innerHTML = cart.map(i => `<div class="r-line"><span>• ${i.n}</span><span>[ ]</span></div>`).join("");
+        
         window.print();
     }
 
