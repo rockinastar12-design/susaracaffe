@@ -3,61 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Susara Caffe | Dual Billing</title>
+    <title>Susara Caffe | Professional Billing</title>
     <style>
         :root {
             --primary: #5d4037;
             --highlight: #f4a261;
             --bg: #faf9f6;
             --dark: #1a1a1a;
+            --success: #2a9d8f;
         }
 
         body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--bg); padding-bottom: 250px; }
         
-        /* UI Styling */
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; }
         .container { padding: 15px; max-width: 600px; margin: auto; }
-        .table-input { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #ddd; }
-        .table-input input { width: 60px; padding: 8px; font-size: 1.1rem; font-weight: bold; text-align: center; border: 2px solid var(--highlight); border-radius: 5px; }
-
-        .section-title { color: var(--primary); border-bottom: 2px solid var(--highlight); margin: 25px 0 10px; font-weight: 800; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
         
+        /* History Styling */
+        .history-box { background: white; padding: 15px; border-radius: 10px; margin-top: 30px; border: 1px solid #ddd; }
+        .search-controls { display: flex; gap: 10px; margin-bottom: 15px; }
+        .search-controls input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .history-list { font-size: 0.85rem; max-height: 500px; overflow-y: auto; }
+        .history-item { border-bottom: 2px solid #f0f0f0; padding: 12px 0; }
+        .history-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+        .history-details { background: #fdfbf7; padding: 8px; border-radius: 5px; font-size: 0.75rem; color: #555; border-left: 3px solid var(--highlight); }
+        .reprint-btn { background: #555; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-top: 5px; }
+
+        /* Menu Styling */
+        .table-input { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #ddd; }
+        .table-input input { width: 60px; padding: 8px; font-weight: bold; text-align: center; border: 2px solid var(--highlight); border-radius: 5px; }
+        .section-title { color: var(--primary); border-bottom: 2px solid var(--highlight); margin: 25px 0 10px; font-weight: 800; text-transform: uppercase; font-size: 0.85rem; }
         .menu-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
         .item-card { background: white; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
-        .item-info h4 { margin: 0; font-size: 0.95rem; color: var(--dark); }
-        .item-info p { margin: 2px 0 0; color: var(--primary); font-weight: 700; font-size: 0.85rem; }
-        .add-btn { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 600; }
-
-        .momo-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; font-size: 0.75rem; border: 1px solid #ddd; }
+        .add-btn { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .momo-table { width: 100%; border-collapse: collapse; background: white; font-size: 0.75rem; border: 1px solid #ddd; }
         .momo-table th { background: var(--primary); color: white; padding: 10px 5px; }
         .momo-table td { padding: 8px 3px; text-align: center; border: 1px solid #eee; }
-        .momo-btn { background: #f8f1ef; border: 1px solid #ddd; padding: 6px; border-radius: 4px; cursor: pointer; font-weight: 700; width: 100%; }
+        .momo-btn { background: #f8f1ef; border: 1px solid #ddd; padding: 6px; border-radius: 4px; cursor: pointer; width: 100%; }
 
-        /* Navigation Cart */
-        #cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark); color: white; padding: 20px; border-radius: 20px 20px 0 0; display: none; flex-direction: column; gap: 10px; z-index: 1000; }
-        .cart-summary { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: bold; }
+        #cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark); color: white; padding: 20px; display: none; flex-direction: column; gap: 10px; z-index: 999; }
         .cart-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .print-btn { grid-column: span 2; background: #2a9d8f; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .clear-btn { background: #e63946; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; }
-        .wa-btn { background: #25D366; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; }
-
-        /* THERMAL PRINT LOGIC (58mm) */
-        #thermal-wrapper { display: none; }
+        .print-btn { grid-column: span 2; background: var(--success); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
         @media print {
             @page { size: 58mm auto; margin: 0; }
             body * { visibility: hidden; }
             #thermal-wrapper, #thermal-wrapper * { visibility: visible; }
-            #thermal-wrapper { 
-                display: block !important; position: absolute; left: 0; top: 0; width: 54mm; 
-                padding: 0; font-family: 'Courier New', monospace; font-size: 12px; color: black; line-height: 1.2;
-            }
+            #thermal-wrapper { display: block !important; position: absolute; left: 0; top: 0; width: 54mm; padding: 0; font-family: 'Courier New', monospace; font-size: 11px; color: black; line-height: 1.1; }
             .receipt-sec { padding: 2mm; }
-            .cut-line { border-top: 1px dashed black; margin: 15px 0; text-align: center; position: relative; }
-            .cut-line:after { content: '✂ TEAR HERE'; font-size: 9px; position: absolute; top: -6px; left: 30%; background: white; padding: 0 5px; }
-            .r-line { display: flex; justify-content: space-between; margin: 2px 0; }
+            .cut-line { border-top: 1px dashed black; margin: 10px 0; text-align: center; }
+            .r-line { display: flex; justify-content: space-between; }
             .r-center { text-align: center; }
-            .r-dash { border-top: 1px dashed black; margin: 5px 0; }
+            .r-dash { border-top: 1px dashed black; margin: 4px 0; }
         }
     </style>
 </head>
@@ -65,39 +61,21 @@
 
 <div id="thermal-wrapper">
     <div class="receipt-sec">
-        <div class="r-center">
-            <strong style="font-size: 16px;">SUSARA CAFFE</strong><br>
-            Tea Estate, Baglung<br>
-            <div class="r-dash"></div>
-            <strong>BILL RECEIPT</strong>
-        </div>
+        <div class="r-center"><strong style="font-size:14px;">SUSARA CAFFE</strong><br>Tea Estate, Baglung<div class="r-dash"></div><strong>BILL</strong></div>
         <div class="r-line"><span>Table:</span> <span class="rt-table"></span></div>
         <div class="r-line"><span>Date:</span> <span class="rt-date"></span></div>
         <div class="r-dash"></div>
         <div class="rt-items"></div>
         <div class="r-dash"></div>
-        <div class="r-line" style="font-weight: bold; font-size: 14px;">
-            <span>TOTAL:</span>
-            <span>Rs.<span class="rt-total"></span></span>
-        </div>
-        <div class="r-dash"></div>
-        <div class="r-center" style="font-size: 10px;">Thank You! Visit Again.<br>By Anup Giri</div>
+        <div class="r-line" style="font-weight:bold;"><span>TOTAL:</span><span>Rs.<span class="rt-total"></span></span></div>
     </div>
-
     <div class="cut-line"></div>
-
     <div class="receipt-sec">
-        <div class="r-center">
-            <strong style="font-size: 15px;">KITCHEN ORDER (KOT)</strong><br>
-            <div class="r-dash"></div>
-        </div>
-        <div class="r-line"><span>TABLE:</span> <strong style="font-size: 20px;" class="rt-table"></strong></div>
-        <div class="r-line"><span>TIME:</span> <span class="rt-date"></span></div>
-        <div class="r-dash"></div>
+        <div class="r-center"><strong>KITCHEN ORDER (KOT)</strong><div class="r-dash"></div></div>
+        <div class="r-line"><span>TBL:</span> <strong style="font-size:16px;" class="rt-table"></strong></div>
         <div class="rt-items-kot"></div>
-        <div class="r-dash"></div>
-        <div class="r-center">*** Kitchen Copy ***</div>
-        <br><br><br> </div>
+        <br><br>
+    </div>
 </div>
 
 <div class="no-print">
@@ -108,131 +86,132 @@
             <input type="number" id="tbl-num" value="1">
         </div>
         <div id="menu-container"></div>
+        <div class="history-box">
+            <h3 style="margin-top:0;">Daily Sales Record</h3>
+            <div class="search-controls">
+                <input type="date" id="search-date" onchange="filterHistory()">
+                <button onclick="exportData()" style="padding:5px; font-size:10px;">CSV Report</button>
+            </div>
+            <div id="daily-total" style="font-weight:bold; color:var(--success); margin-bottom:10px;"></div>
+            <div class="history-list" id="history-content"></div>
+        </div>
     </div>
 </div>
 
 <div id="cart-bar" class="no-print">
-    <div id="cart-preview" style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px;"></div>
-    <div class="cart-summary">
-        <span>Total:</span>
-        <span>Rs. <span id="total-amt">0</span></span>
-    </div>
+    <div class="cart-summary"><span>Current Total:</span><span>Rs. <span id="total-amt">0</span></span></div>
     <div class="cart-btns">
-        <button class="print-btn" onclick="doPrint()">PRINT BILL + KOT</button>
-        <button class="wa-btn" onclick="sendWA()">WHATSAPP</button>
-        <button class="clear-btn" onclick="clearCart()">CLEAR</button>
+        <button class="print-btn" onclick="saveAndPrint()">FINISH & PRINT BILL</button>
+        <button onclick="clearCart()" style="background:#e63946; color:white; border:none; border-radius:10px; cursor:pointer;">CLEAR</button>
     </div>
 </div>
 
 <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzRxZBB0eTcAmrasLfP3VUmbr-PUwoN4M8VTh7YGPA7J5uGk7ISs0N1kD_awqautRCMuw/exec';
+
     const fullMenu = {
-        "Coffee (Hot)": [
-            {n: "Ristretto", p: 100}, {n: "Espresso", p: 100}, {n: "Doppio", p: 150},
-            {n: "Americano", p: 130}, {n: "Cappuccino", p: 150}, {n: "Café Latte", p: 180},
-            {n: "Honey Latte", p: 200}, {n: "Lungo", p: 150}, {n: "Mocaccino", p: 180},
-            {n: "Flat White", p: 180}, {n: "Hot Chocolate", p: 200}, {n: "Hot Lemon Honey", p: 100}
-        ],
-        "Tea Selection": [
-            {n: "Lemon Tea", p: 60}, {n: "Green Tea", p: 50}, {n: "Black Tea", p: 50}, {n: "Milk Tea", p: 40}
-        ],
-        "Breakfast & Paratha": [
-            {n: "Chana Tarkari", p: 80}, {n: "Chana Anda", p: 120}, {n: "Samosa Tarkari", p: 120},
-            {n: "Lachha Paratha", p: 110}, {n: "Boiled Egg", p: 40}, {n: "Puri Tarkari", p: 120},
-            {n: "Plain Omelette", p: 100}, {n: "Bread Omelette", p: 120}, {n: "Sel Roti", p: 50}
-        ],
-        "Chowmein & Thukpa": [
-            {n: "Veg Chowmein", p: 100}, {n: "Chicken Chowmein", p: 180}, {n: "Egg Chowmein", p: 150},
-            {n: "Mix Chowmein", p: 250}, {n: "Veg Thukpa", p: 180}, {n: "Chicken Thukpa", p: 230},
-            {n: "Egg Thukpa", p: 210}, {n: "Mix Thukpa", p: 250}
-        ],
-        "Sandwich & Burger": [
-            {n: "Veg Sandwich", p: 150}, {n: "Chicken Sandwich", p: 200}, {n: "Veg Burger", p: 200},
-            {n: "Chicken Burger", p: 250}, {n: "Mix Burger", p: 300}, {n: "Chicken Katti Roll", p: 250}
-        ],
-        "Snacks & Chilly": [
-            {n: "Sausage (2pc)", p: 220}, {n: "Chicken Chilly", p: 300}, {n: "Chicken Fry", p: 300},
-            {n: "Chicken Wings", p: 350}, {n: "French Fry", p: 200}, {n: "Peanut Sadeko", p: 150},
-            {n: "Badmas Sadeko", p: 150}
-        ],
-        "Lassi & Salad": [
-            {n: "Plain Lassi", p: 100}, {n: "Banana Lassi", p: 120}, {n: "Chocolate Lassi", p: 150},
-            {n: "Green Salad", p: 150}, {n: "Mix Salad", p: 250}
-        ]
+        "Coffee (Hot)": [{n: "Ristretto", p: 100}, {n: "Espresso", p: 100}, {n: "Americano", p: 130}, {n: "Cappuccino", p: 150}, {n: "Café Latte", p: 180}, {n: "Honey Latte", p: 200}, {n: "Mocaccino", p: 180}, {n: "Hot Chocolate", p: 200}],
+        "Tea & Others": [{n: "Lemon Tea", p: 60}, {n: "Green Tea", p: 50}, {n: "Black Tea", p: 50}, {n: "Milk Tea", p: 40}],
+        "Breakfast": [{n: "Chana Anda", p: 120}, {n: "Samosa Tarkari", p: 120}, {n: "Lachha Paratha", p: 110}, {n: "Puri Tarkari", p: 120}, {n: "Bread Omelette", p: 120}],
+        "Main Course": [{n: "Veg Chowmein", p: 100}, {n: "Chicken Chowmein", p: 180}, {n: "Veg Thukpa", p: 180}, {n: "Chicken Thukpa", p: 230}],
+        "Burgers & Rolls": [{n: "Veg Burger", p: 200}, {n: "Chicken Burger", p: 250}, {n: "Chicken Katti Roll", p: 250}],
+        "Snacks": [{n: "Chicken Chilly", p: 300}, {n: "Chicken Fry", p: 300}, {n: "French Fry", p: 200}, {n: "Peanut Sadeko", p: 150}]
     };
 
-    const momoData = [
-        {t: "Veg", s: 150, f: 200, j: 210, c: 250},
-        {t: "Chicken", s: 180, f: 250, j: 280, c: 280},
-        {t: "Banana", s: 150, f: 200, j: 210, c: 210}
-    ];
-
+    const momoData = [{t: "Veg", s: 150, f: 200, j: 210, c: 250}, {t: "Chicken", s: 180, f: 250, j: 280, c: 280}, {t: "Banana", s: 150, f: 200, j: 210, c: 210}];
+    
     let cart = []; let total = 0;
+    let transactions = JSON.parse(localStorage.getItem('susara_db')) || [];
 
     function initMenu() {
         const container = document.getElementById('menu-container');
-        
-        container.innerHTML += `<div class="section-title">MOMO SPECIALS</div>
-            <table class="momo-table">
-                <thead><tr><th>TYPE</th><th>STM</th><th>FRY</th><th>JHL</th><th>CHL</th></tr></thead>
-                <tbody id="momo-body"></tbody>
-            </table>`;
-        
-        const mBody = document.getElementById('momo-body');
+        container.innerHTML = `<div class="section-title">MOMO SPECIALS</div><table class="momo-table"><thead><tr><th>TYPE</th><th>STM</th><th>FRY</th><th>JHL</th><th>CHL</th></tr></thead><tbody id="momo-body"></tbody></table>`;
         momoData.forEach(m => {
-            mBody.innerHTML += `<tr>
-                <td><b>${m.t}</b></td>
-                <td><button class="momo-btn" onclick="add('${m.t} Stm', ${m.s})">${m.s}</button></td>
-                <td><button class="momo-btn" onclick="add('${m.t} Fry', ${m.f})">${m.f}</button></td>
-                <td><button class="momo-btn" onclick="add('${m.t} Jhl', ${m.j})">${m.j}</button></td>
-                <td><button class="momo-btn" onclick="add('${m.t} Chl', ${m.c})">${m.c}</button></td>
-            </tr>`;
+            document.getElementById('momo-body').innerHTML += `<tr><td><b>${m.t}</b></td><td><button class="momo-btn" onclick="add('${m.t} Stm', ${m.s})">${m.s}</button></td><td><button class="momo-btn" onclick="add('${m.t} Fry', ${m.f})">${m.f}</button></td><td><button class="momo-btn" onclick="add('${m.t} Jhl', ${m.j})">${m.j}</button></td><td><button class="momo-btn" onclick="add('${m.t} Chl', ${m.c})">${m.c}</button></td></tr>`;
         });
-
         for (let cat in fullMenu) {
             container.innerHTML += `<div class="section-title">${cat}</div><div class="menu-grid" id="${cat.replace(/\s/g, '')}"></div>`;
-            const grid = document.getElementById(cat.replace(/\s/g, ''));
             fullMenu[cat].forEach(i => {
-                grid.innerHTML += `<div class="item-card">
-                    <div class="item-info"><h4>${i.n}</h4><p>Rs.${i.p}</p></div>
-                    <button class="add-btn" onclick="add('${i.n}', ${i.p})">ADD</button>
-                </div>`;
+                document.getElementById(cat.replace(/\s/g, '')).innerHTML += `<div class="item-card"><div><h4>${i.n}</h4><p>Rs.${i.p}</p></div><button class="add-btn" onclick="add('${i.n}', ${i.p})">ADD</button></div>`;
             });
         }
+        filterHistory();
     }
 
-    function add(n, p) {
-        cart.push({n, p});
-        total += p;
-        document.getElementById('cart-bar').style.display = 'flex';
-        document.getElementById('total-amt').innerText = total;
-        document.getElementById('cart-preview').innerText = cart.map(i => i.n).join(", ");
-    }
-
+    function add(n, p) { cart.push({n, p}); total += p; document.getElementById('cart-bar').style.display = 'flex'; document.getElementById('total-amt').innerText = total; }
     function clearCart() { cart = []; total = 0; document.getElementById('cart-bar').style.display = 'none'; }
 
-    function doPrint() {
-        const table = document.getElementById('tbl-num').value;
-        const dateTime = new Date().toLocaleString([], {hour: '2-digit', minute:'2-digit', day:'numeric', month:'short'});
-        
-        document.querySelectorAll('.rt-table').forEach(s => s.innerText = table);
-        document.querySelectorAll('.rt-date').forEach(s => s.innerText = dateTime);
-        document.querySelectorAll('.rt-total').forEach(s => s.innerText = total);
-        
-        // Customer Items
-        document.querySelector('.rt-items').innerHTML = cart.map(i => `<div class="r-line"><span>${i.n}</span><span>${i.p}</span></div>`).join("");
-        
-        // Kitchen Items (No prices, bullet points)
-        document.querySelector('.rt-items-kot').innerHTML = cart.map(i => `<div class="r-line"><span>• ${i.n}</span><span>[ ]</span></div>`).join("");
-        
-        window.print();
+    function sendDataToGoogle(entry) {
+        const payload = {
+            date: entry.date,
+            fullTime: entry.fullTime,
+            table: entry.table,
+            items: entry.items.map(i => `${i.n} (Rs.${i.p})`).join(", "),
+            amount: entry.amount
+        };
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+        .catch(err => console.error('Sync Error:', err));
     }
 
-    function sendWA() {
-        const tbl = document.getElementById('tbl-num').value;
-        let txt = `*SUSARA CAFFE ORDER*\nTable: ${tbl}\n----------\n`;
-        cart.forEach(i => txt += `${i.n} - Rs.${i.p}\n`);
-        txt += `----------\n*TOTAL: Rs.${total}*`;
-        window.open(`https://wa.me/9779849957082?text=${encodeURIComponent(txt)}`);
+    function saveAndPrint() {
+        const entry = { id: Date.now(), date: new Date().toISOString().split('T')[0], fullTime: new Date().toLocaleString(), table: document.getElementById('tbl-num').value, items: [...cart], amount: total };
+        transactions.push(entry);
+        localStorage.setItem('susara_db', JSON.stringify(transactions));
+        sendDataToGoogle(entry);
+        renderThermal(entry);
+        window.print();
+        clearCart();
+        filterHistory();
+    }
+
+    function reprint(id) {
+        const entry = transactions.find(t => t.id === id);
+        if (entry) { renderThermal(entry); window.print(); }
+    }
+
+    function renderThermal(data) {
+        document.querySelectorAll('.rt-table').forEach(s => s.innerText = data.table);
+        document.querySelectorAll('.rt-date').forEach(s => s.innerText = data.fullTime);
+        document.querySelectorAll('.rt-total').forEach(s => s.innerText = data.amount);
+        document.querySelector('.rt-items').innerHTML = data.items.map(i => `<div class="r-line"><span>${i.n}</span><span>${i.p}</span></div>`).join("");
+        document.querySelector('.rt-items-kot').innerHTML = data.items.map(i => `<div>• ${i.n}</div>`).join("");
+    }
+
+    function filterHistory() {
+        const searchDate = document.getElementById('search-date').value;
+        const list = document.getElementById('history-content');
+        const displayTotal = document.getElementById('daily-total');
+        list.innerHTML = "";
+        let filtered = searchDate ? transactions.filter(t => t.date === searchDate) : transactions;
+        let daySum = 0;
+
+        filtered.slice().reverse().forEach(t => {
+            daySum += t.amount;
+            const itemsWithPrices = t.items.map(i => `<div>${i.n} - Rs.${i.p}</div>`).join("");
+            list.innerHTML += `
+                <div class="history-item">
+                    <div class="history-header">
+                        <div><strong>Tbl ${t.table}</strong> | <small>${t.fullTime.split(',')[1]}</small></div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:bold; color:var(--primary);">Rs.${t.amount}</div>
+                        </div>
+                    </div>
+                    <div class="history-details">${itemsWithPrices}</div>
+                    <button class="reprint-btn" onclick="reprint(${t.id})">REPRINT BILL</button>
+                </div>`;
+        });
+        displayTotal.innerText = searchDate ? `Sales for ${searchDate}: Rs. ${daySum}` : `Total Record: Rs. ${daySum}`;
+    }
+
+    function exportData() {
+        let csv = "ID,Date,Time,Table,Items_Breakdown,Total\n";
+        transactions.forEach(t => {
+            let itemStr = t.items.map(i => `${i.n}(${i.p})`).join(" | ");
+            csv += `${t.id},${t.date},${t.fullTime.split(',')[1]},${t.table},"${itemStr}",${t.amount}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = Object.assign(document.createElement('a'), { href: window.URL.createObjectURL(blob), download: 'Susara_Detailed_Sales.csv' });
+        a.click();
     }
 
     window.onload = initMenu;
