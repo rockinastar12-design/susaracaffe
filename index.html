@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Susara Caffe | Premium POS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         :root {
             --brand: #2c3e50;
@@ -16,7 +19,6 @@
 
         body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding-bottom: 120px; }
         
-        /* Navigation */
         nav { background: var(--brand); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .nav-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; }
         .table-sel { background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 10px; display: flex; align-items: center; gap: 10px; }
@@ -24,7 +26,6 @@
 
         .main-container { display: grid; grid-template-columns: 1fr 380px; gap: 25px; padding: 25px; max-width: 1400px; margin: auto; }
 
-        /* Menu Grid */
         .section-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; color: #7f8c8d; margin: 30px 0 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
         .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
         .item-card { background: var(--white); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; transition: all 0.2s; cursor: pointer; }
@@ -33,7 +34,6 @@
         .item-price { color: var(--accent); font-weight: 700; font-size: 0.9rem; margin-top: 4px; }
         .btn-add { background: #f8f9fa; border: none; width: 32px; height: 32px; border-radius: 50%; color: var(--brand); font-size: 1.2rem; cursor: pointer; }
 
-        /* Momo Table */
         .momo-box { background: white; border-radius: 15px; overflow: hidden; border: 1px solid #eee; }
         .momo-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .momo-table th { background: #f8f9fa; padding: 12px; color: #7f8c8d; }
@@ -41,18 +41,15 @@
         .momo-price-btn { background: #fffcf9; border: 1px solid #ffeada; padding: 8px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; color: var(--brand); }
         .momo-price-btn:hover { background: var(--accent); color: white; }
 
-        /* Sidebar Panels */
         .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .history-item { border-bottom: 1px solid #f1f1f1; padding: 12px 0; font-size: 0.85rem; }
 
-        /* Floating Cart Drawer */
         .cart-drawer { position: fixed; bottom: 20px; right: 20px; width: 340px; background: var(--brand); color: white; border-radius: 20px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.3); display: none; }
         .cart-header { font-size: 0.75rem; text-transform: uppercase; opacity: 0.6; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
         .cart-items-list { max-height: 200px; overflow-y: auto; margin-bottom: 15px; }
         .cart-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
         .btn-print { background: var(--success); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 15px; }
 
-        /* Printing Template */
         #thermal-print { display: none; }
         @media print {
             body * { visibility: hidden; }
@@ -85,7 +82,7 @@
             <input type="date" id="search-date" onchange="filterHistory()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;">
             <div id="daily-total" style="font-weight: bold; color: var(--success); margin-bottom: 15px;"></div>
             <div id="history-target"></div>
-            <button onclick="exportData()" style="width: 100%; padding: 10px; border: none; background: #eee; border-radius: 8px; cursor: pointer; font-size: 0.8rem; margin-top: 10px;">Export CSV</button>
+            <button onclick="exportPDF()" style="width: 100%; padding: 12px; border: none; background: var(--brand); color: white; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px;">DOWNLOAD PDF REPORT</button>
         </div>
     </div>
 </div>
@@ -109,8 +106,7 @@
     <div id="pr-items"></div>
     <div class="r-dash"></div>
     <div class="r-line" style="font-weight: bold;"><span>TOTAL:</span><span>Rs.<span class="pr-total"></span></span></div>
-    <div class="r-center" style="margin-top:20px;">--- KOT (Kitchen) ---</div>
-    <div class="r-line"><span>TABLE:</span> <strong class="pr-table"></strong></div>
+    <div class="r-center" style="margin-top:20px;">--- KOT (Kitchen copy) ---</div>
     <div id="pr-kot"></div>
 </div>
 
@@ -199,10 +195,8 @@
         transactions.push(entry);
         localStorage.setItem('susara_db', JSON.stringify(transactions));
         
-        // Sync to Sheets
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({...entry, items: entry.items.map(i => i.n).join(", ")}) });
 
-        // Print Config
         document.querySelectorAll('.pr-table').forEach(el => el.innerText = entry.table);
         document.querySelectorAll('.pr-date').forEach(el => el.innerText = entry.fullTime);
         document.querySelectorAll('.pr-total').forEach(el => el.innerText = entry.amount);
@@ -242,12 +236,51 @@
         }
     }
 
-    function exportData() {
-        let csv = "Date,Table,Items,Total\n";
-        transactions.forEach(t => csv += `${t.date},${t.table},"${t.items.map(i => i.n).join('|')}",${t.amount}\n`);
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const a = Object.assign(document.createElement('a'), { href: window.URL.createObjectURL(blob), download: 'Sales_Record.csv' });
-        a.click();
+    // PDF EXPORT FUNCTION
+    function exportPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        const dateFilter = document.getElementById('search-date').value || "All Time";
+        
+        // Header
+        doc.setFontSize(20);
+        doc.setTextColor(44, 62, 80);
+        doc.text("SUSARA CAFFE - SALES REPORT", 14, 22);
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Report Period: ${dateFilter}`, 14, 30);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 35);
+
+        // Filter data based on selection
+        let filtered = dateFilter !== "All Time" ? transactions.filter(t => t.date === dateFilter) : transactions;
+        
+        const tableData = filtered.map(t => [
+            t.date,
+            t.table,
+            t.items.map(i => i.n).join(", "),
+            `Rs. ${t.amount}`
+        ]);
+
+        // Table
+        doc.autoTable({
+            startY: 45,
+            head: [['Date', 'Table', 'Items Sold', 'Amount']],
+            body: tableData,
+            headStyles: { fillStyle: 'f', fillColor: [44, 62, 80] },
+            alternateRowStyles: { fillColor: [245, 245, 245] },
+            margin: { left: 14, right: 14 }
+        });
+
+        // Total
+        const totalSum = filtered.reduce((acc, curr) => acc + curr.amount, 0);
+        const finalY = doc.lastAutoTable.finalY || 45;
+        doc.setFontSize(12);
+        doc.setTextColor(230, 126, 34);
+        doc.text(`GRAND TOTAL: Rs. ${totalSum}`, 14, finalY + 15);
+
+        doc.save(`Susara_Caffe_Report_${dateFilter}.pdf`);
     }
 
     window.onload = renderMenu;
