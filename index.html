@@ -1,351 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Susara Mobile POS</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-    
-    <style>
-        :root {
-            --brand: #2c3e50;
-            --accent: #e67e22;
-            --bg: #f8f9fa;
-            --white: #ffffff;
-            --success: #27ae60;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Susara Cafe POS</title>
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+<style>
+:root{
+--brand:#2c3e50;
+--accent:#e67e22;
+--bg:#f4f6f7;
+--success:#27ae60;
+--danger:#e74c3c;
+}
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg); 
-            margin: 0; 
-            padding-bottom: 100px; /* Space for fixed bottom bar */
-            overflow-x: hidden;
-            width: 100vw;
-        }
+body{
+margin:0;
+font-family:sans-serif;
+background:var(--bg);
+padding-bottom:130px;
+}
 
-        /* Mobile Header */
-        nav { 
-            background: var(--brand); 
-            color: white; 
-            padding: 12px 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-        }
-        .nav-logo { font-size: 1.1rem; font-weight: 800; }
-        .table-sel { 
-            background: rgba(255,255,255,0.15); 
-            padding: 5px 12px; 
-            border-radius: 8px; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            font-size: 0.9rem;
-        }
-        .table-sel input { 
-            width: 40px; 
-            background: transparent; 
-            border: none; 
-            border-bottom: 2px solid var(--accent); 
-            color: white; 
-            text-align: center; 
-            font-size: 1rem; 
-            font-weight: bold;
-            outline: none; 
-        }
+nav{
+background:var(--brand);
+color:white;
+padding:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
 
-        .container { padding: 12px; width: 100%; }
+input{
+width:50px;
+text-align:center;
+}
 
-        /* Mobile Scrollable Categories */
-        .section-title { 
-            font-size: 0.8rem; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            color: #7f8c8d; 
-            margin: 20px 0 10px; 
-            font-weight: bold;
-        }
+.container{padding:10px;}
 
-        /* Menu Grid - 2 Columns on Mobile */
-        .menu-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 10px; 
-        }
-        .item-card { 
-            background: var(--white); 
-            border-radius: 12px; 
-            padding: 12px; 
-            display: flex; 
-            flex-direction: column;
-            justify-content: space-between;
-            border: 1px solid #eee; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-            min-height: 90px;
-        }
-        .item-card:active { background: #f0f0f0; transform: scale(0.96); }
-        .item-name { font-weight: 600; color: var(--brand); font-size: 0.85rem; margin-bottom: 5px; }
-        .item-price { color: var(--accent); font-weight: 700; font-size: 0.9rem; }
+.section{
+font-weight:bold;
+margin-top:15px;
+color:#555;
+}
 
-        /* Momo Mobile Table - Optimized for small screens */
-        .momo-box { 
-            background: white; 
-            border-radius: 12px; 
-            overflow-x: auto; 
-            border: 1px solid #eee; 
-            margin-bottom: 10px;
-        }
-        .momo-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; min-width: 300px; }
-        .momo-table th { background: #f8f9fa; padding: 10px 5px; color: #7f8c8d; }
-        .momo-table td { padding: 8px 4px; text-align: center; border-bottom: 1px solid #f1f1f1; }
-        .momo-price-btn { 
-            background: #fffcf9; 
-            border: 1px solid #ffeada; 
-            padding: 8px 4px; 
-            border-radius: 6px; 
-            width: 100%; 
-            font-weight: bold; 
-            font-size: 0.8rem;
-        }
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
 
-        /* Floating Bottom Cart */
-        .cart-bar { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: var(--brand); 
-            color: white; 
-            padding: 15px; 
-            border-radius: 20px 20px 0 0;
-            display: none; 
-            z-index: 200;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
-        }
-        .cart-summary { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .cart-items-preview { 
-            max-height: 100px; 
-            overflow-y: auto; 
-            font-size: 0.8rem; 
-            margin-bottom: 10px; 
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 8px;
-        }
-        .cart-row { display: flex; justify-content: space-between; margin-bottom: 4px; opacity: 0.9; }
-        .btn-action { 
-            background: var(--success); 
-            color: white; 
-            border: none; 
-            width: 100%; 
-            padding: 14px; 
-            border-radius: 12px; 
-            font-weight: bold; 
-            font-size: 1rem;
-        }
+.item{
+background:white;
+padding:10px;
+border-radius:10px;
+border:1px solid #ddd;
+}
 
-        /* History Section */
-        .history-card { 
-            background: white; 
-            border-radius: 15px; 
-            padding: 15px; 
-            margin-top: 30px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .history-item { border-bottom: 1px solid #eee; padding: 10px 0; }
+.item:active{transform:scale(0.97);}
 
-        /* Hidden Printer Template */
-        #thermal-print { display: none; }
-        @media print {
-            body * { visibility: hidden; }
-            #thermal-print, #thermal-print * { visibility: visible; }
-            #thermal-print { display: block !important; position: absolute; left: 0; top: 0; width: 58mm; font-size: 12px; }
-        }
-    </style>
+.price{color:var(--accent);font-weight:bold;}
+
+.cart{
+position:fixed;
+bottom:0;
+width:100%;
+background:var(--brand);
+color:white;
+padding:12px;
+display:none;
+}
+
+button{
+border:none;
+padding:10px;
+border-radius:8px;
+}
+
+.print{background:var(--success);color:white;width:65%;}
+.clear{background:var(--danger);color:white;width:30%;}
+
+@media print{
+body *{visibility:hidden;}
+#print,#print *{visibility:visible;}
+#print{
+position:absolute;
+left:0;
+top:0;
+width:58mm;
+font-size:12px;
+font-family:monospace;
+}
+}
+</style>
 </head>
+
 <body>
 
 <nav>
-    <div class="nav-logo">SUSARA CAFFE</div>
-    <div class="table-sel">
-        <span>TBL</span>
-        <input type="number" id="tbl-num" value="1" inputmode="numeric">
-    </div>
+<b>SUSARA CAFE</b>
+Table <input id="table" value="1">
 </nav>
 
-<div class="container">
-    <div id="menu-target"></div>
+<div class="container" id="menu"></div>
 
-    <div class="history-card">
-        <h3 style="margin:0 0 10px 0; font-size: 1rem;">Sales Record</h3>
-        <input type="date" id="search-date" onchange="filterHistory()" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-bottom:10px; font-size: 1rem;">
-        <div id="daily-total" style="font-weight:bold; color:var(--success); font-size:0.9rem; margin-bottom:10px;"></div>
-        <div id="history-target"></div>
-        <button onclick="exportPDF()" style="width:100%; margin-top:10px; padding:12px; background:var(--brand); color:white; border:none; border-radius:10px; font-weight:bold;">DOWNLOAD PDF REPORT</button>
-    </div>
+<div class="cart" id="cartBox">
+<div id="cartItems"></div>
+<b>Total: Rs <span id="total">0</span></b><br><br>
+
+<button class="print" onclick="printBill()">PRINT</button>
+<button class="clear" onclick="clearCart()">CLEAR</button>
 </div>
 
-<div id="cart-drawer" class="cart-bar">
-    <div id="cart-items-ui" class="cart-items-preview"></div>
-    <div class="cart-summary">
-        <span style="font-size:0.9rem; opacity:0.8;">Total</span>
-        <span style="font-size: 1.4rem; font-weight: 800; color: var(--accent);">Rs. <span id="total-val">0</span></span>
-    </div>
-    <div style="display: flex; gap: 10px;">
-        <button onclick="clearCart()" style="flex: 1; background: transparent; color: #ff7675; border: 1px solid #ff7675; border-radius: 10px; font-size: 0.8rem;">Clear</button>
-        <button class="btn-action" style="flex: 3;" onclick="saveAndPrint()">PRINT BILL</button>
-    </div>
-</div>
-
-<div id="thermal-print">
-    <div style="text-align:center;"><strong>SUSARA CAFFE</strong><br>Mobile POS Receipt<hr></div>
-    <div style="display:flex; justify-content:space-between;"><span>Table: <span class="pr-table"></span></span> <span class="pr-date"></span></div>
-    <hr>
-    <div id="pr-items"></div>
-    <hr>
-    <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>TOTAL:</span><span>Rs.<span class="pr-total"></span></span></div>
-    <div style="text-align:center; margin-top:20px;">--- KOT (KITCHEN) ---</div>
-    <div id="pr-kot"></div>
-</div>
+<pre id="print"></pre>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzRxZBB0eTcAmrasLfP3VUmbr-PUwoN4M8VTh7YGPA7J5uGk7ISs0N1kD_awqautRCMuw/exec';
 
-    const menuData = {
-        "Coffee": [
-            {n: "Americano", p: 130}, {n: "Cappuccino", p: 150}, {n: "Latte", p: 180}, {n: "Mocaccino", p: 180},
-            {n: "Ristretto", p: 100}, {n: "Espresso", p: 100}, {n: "Honey Latte", p: 200}, {n: "Hot Choco", p: 200}
-        ],
-        "Tea & Breakfast": [
-            {n: "Lemon Tea", p: 60}, {n: "Milk Tea", p: 40}, {n: "Chana Anda", p: 120}, {n: "Puri Tarkari", p: 120}, {n: "Bread Omlet", p: 120}
-        ],
-        "Mains & Snacks": [
-            {n: "Veg Chowmein", p: 100}, {n: "Chic Chowmein", p: 180}, {n: "Veg Burger", p: 200}, {n: "Chic Burger", p: 250},
-            {n: "Chic Chilly", p: 300}, {n: "French Fry", p: 200}, {n: "Sausage", p: 220}
-        ]
-    };
+const scriptURL="https://script.google.com/macros/s/AKfycbybEjjxx2qUylSok_Npg0h4VRZ9LRxRrmX0DoC-wYRXakjMP0Kiwot3vcpGlgAF3g-xuQ/exec";
 
-    const momos = [
-        {t: "Veg", s: 150, f: 200, j: 210, c: 250},
-        {t: "Chicken", s: 180, f: 250, j: 280, c: 280},
-        {t: "Banana", s: 150, f: 200, j: 210, c: 210}
-    ];
+/* FULL MENU */
+const menuData = {
+"Special":[
+{n:"Gajar ko Aalu Paratha",p:100},
+{n:"Fapar ko Jhol Momo",p:230}
+],
 
-    let cart = []; let total = 0;
-    let transactions = JSON.parse(localStorage.getItem('susara_db')) || [];
+"Coffee":[
+{n:"Espresso",p:100},{n:"Doppio",p:150},{n:"Americano",p:130},
+{n:"Cappuccino",p:150},{n:"Cafe Latte",p:200},{n:"Honey Latte",p:220},
+{n:"Lungo",p:160},{n:"Hot Choc",p:200},{n:"Flat White",p:180},
+{n:"Hot Lemon Honey",p:100},{n:"Lemon Tea",p:60},
+{n:"Black Tea",p:50},{n:"Green Tea",p:50}
+],
 
-    function render() {
-        let h = `<div class="section-title">Momos</div><div class="momo-box"><table class="momo-table"><thead><tr><th>TYPE</th><th>STM</th><th>FRY</th><th>JHL</th><th>CHL</th></tr></thead><tbody>`;
-        momos.forEach(m => {
-            h += `<tr><td><strong>${m.t}</strong></td>
-            <td><button class="momo-price-btn" onclick="add('${m.t} Stm', ${m.s})">${m.s}</button></td>
-            <td><button class="momo-price-btn" onclick="add('${m.t} Fry', ${m.f})">${m.f}</button></td>
-            <td><button class="momo-price-btn" onclick="add('${m.t} Jhl', ${m.j})">${m.j}</button></td>
-            <td><button class="momo-price-btn" onclick="add('${m.t} Chl', ${m.c})">${m.c}</button></td></tr>`;
-        });
-        h += `</tbody></table></div>`;
+"Breakfast":[
+{n:"Chana Anda",p:120},{n:"Samosa Tarkari",p:120},
+{n:"Lachha Paratha",p:110},{n:"Puri Tarkari",p:120},
+{n:"Chana Tarkari",p:80},{n:"Bread Omlet",p:120},
+{n:"Veg Sandwich",p:150},{n:"Egg Sandwich",p:190},
+{n:"Chicken Sandwich",p:220},{n:"Mix Sandwich",p:250}
+],
 
-        for(let cat in menuData) {
-            h += `<div class="section-title">${cat}</div><div class="menu-grid">`;
-            menuData[cat].forEach(item => {
-                h += `<div class="item-card" onclick="add('${item.n}', ${item.p})"><div class="item-name">${item.n}</div><div class="item-price">Rs.${item.p}</div></div>`;
-            });
-            h += `</div>`;
-        }
-        document.getElementById('menu-target').innerHTML = h;
-        filterHistory();
-    }
+"Chowmein":[
+{n:"Veg Chowmein",p:120},{n:"Chicken Chowmein",p:180},
+{n:"Egg Chowmein",p:150},{n:"Mix Chowmein",p:250}
+],
 
-    function add(n, p) {
-        cart.push({n, p});
-        total += p;
-        document.getElementById('cart-drawer').style.display = 'block';
-        document.getElementById('total-val').innerText = total;
-        document.getElementById('cart-items-ui').innerHTML = cart.map(i => `<div class="cart-row"><span>${i.n}</span><span>Rs.${i.p}</span></div>`).join("");
-        // Haptic feedback (if supported)
-        if (window.navigator.vibrate) window.navigator.vibrate(50);
-    }
+"Thukpa":[
+{n:"Veg Thukpa",p:180},{n:"Chicken Thukpa",p:230},
+{n:"Egg Thukpa",p:210},{n:"Mix Thukpa",p:250}
+],
 
-    function clearCart() {
-        cart = []; total = 0;
-        document.getElementById('cart-drawer').style.display = 'none';
-    }
+"Combo":[
+{n:"Veg Combo",p:200},{n:"Chicken Combo",p:250},{n:"Mix Combo",p:280}
+],
 
-    function saveAndPrint() {
-        if(cart.length === 0) return;
-        const entry = {
-            id: Date.now(),
-            date: new Date().toISOString().split('T')[0],
-            fullTime: new Date().toLocaleString(),
-            table: document.getElementById('tbl-num').value,
-            items: [...cart],
-            amount: total
-        };
-        transactions.push(entry);
-        localStorage.setItem('susara_db', JSON.stringify(transactions));
-        
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({...entry, items: entry.items.map(i => i.n).join(", ")}) });
+"Lassi":[
+{n:"Plain Lassi",p:120},{n:"Banana Lassi",p:150},{n:"Mix Lassi",p:180}
+]
+};
 
-        document.querySelectorAll('.pr-table').forEach(el => el.innerText = entry.table);
-        document.querySelectorAll('.pr-date').forEach(el => el.innerText = entry.fullTime);
-        document.querySelectorAll('.pr-total').forEach(el => el.innerText = entry.amount);
-        document.getElementById('pr-items').innerHTML = entry.items.map(i => `<div style="display:flex; justify-content:space-between;"><span>${i.n}</span><span>${i.p}</span></div>`).join("");
-        document.getElementById('pr-kot').innerHTML = entry.items.map(i => `<div>• ${i.n}</div>`).join("");
+const momoList=[
+{t:"Chicken Momo",s:150,f:200,j:220,c:250},
+{t:"Veg Momo",s:130,f:160,j:190,c:220},
+{t:"Buff Momo",s:200,f:250,j:280,c:300},
+{t:"Kera Veg Momo",s:150,f:200,j:220,c:250}
+];
 
-        window.print();
-        clearCart();
-        filterHistory();
-    }
+let cart=[];
+let total=0;
 
-    function filterHistory() {
-        const date = document.getElementById('search-date').value;
-        const target = document.getElementById('history-target');
-        const sumEl = document.getElementById('daily-total');
-        target.innerHTML = ""; let dayTotal = 0;
-        let filtered = date ? transactions.filter(t => t.date === date) : transactions;
-        filtered.slice().reverse().forEach(t => {
-            dayTotal += t.amount;
-            target.innerHTML += `<div class="history-item">
-                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:0.85rem;">
-                    <span>Tbl ${t.table} | Rs.${t.amount}</span>
-                    <button onclick="reprint(${t.id})" style="background:none; border:none; color:var(--accent); font-weight:bold; font-size:0.75rem;">REPRINT</button>
-                </div>
-                <div style="font-size:0.7rem; color:#888;">${t.fullTime}</div>
-            </div>`;
-        });
-        sumEl.innerText = date ? `Total for ${date}: Rs. ${dayTotal}` : `Lifetime Sales: Rs. ${dayTotal}`;
-    }
+/* RENDER */
+function render(){
+let html="";
 
-    function reprint(id) {
-        const t = transactions.find(x => x.id === id);
-        if(t) {
-            document.querySelectorAll('.pr-table').forEach(el => el.innerText = t.table);
-            document.querySelectorAll('.pr-date').forEach(el => el.innerText = t.fullTime);
-            document.querySelectorAll('.pr-total').forEach(el => el.innerText = t.amount);
-            document.getElementById('pr-items').innerHTML = t.items.map(i => `<div style="display:flex; justify-content:space-between;"><span>${i.n}</span><span>${i.p}</span></div>`).join("");
-            window.print();
-        }
-    }
+/* MOMO */
+html+=`<div class="section">MOMO</div><div class="grid">`;
+momoList.forEach(m=>{
+html+=`
+<div class="item">
+<b>${m.t}</b><br>
+<button onclick="add('${m.t} Steam',${m.s})">${m.s}</button>
+<button onclick="add('${m.t} Fry',${m.f})">${m.f}</button>
+<button onclick="add('${m.t} Jhol',${m.j})">${m.j}</button>
+<button onclick="add('${m.t} Chilly',${m.c})">${m.c}</button>
+</div>`;
+});
+html+=`</div>`;
 
-    function exportPDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const dateFilter = document.getElementById('search-date').value || "Full_Report";
-        doc.text("SUSARA CAFFE SALES", 14, 15);
-        let filtered = dateFilter !== "Full_Report" ? transactions.filter(t => t.date === dateFilter) : transactions;
-        const rows = filtered.map(t => [t.date, t.table, t.items.map(i => i.n).join(","), t.amount]);
-        doc.autoTable({ head: [['Date', 'Table', 'Items', 'Total']], body: rows, startY: 20 });
-        doc.save(`Sales_${dateFilter}.pdf`);
-    }
+/* MENU */
+for(let cat in menuData){
+html+=`<div class="section">${cat}</div><div class="grid">`;
 
-    window.onload = render;
+menuData[cat].forEach(i=>{
+html+=`
+<div class="item" onclick="add('${i.n}',${i.p})">
+${i.n}<br>
+<span class="price">Rs ${i.p}</span>
+</div>`;
+});
+
+html+="</div>";
+}
+
+document.getElementById("menu").innerHTML=html;
+}
+
+/* ADD */
+function add(n,p){
+cart.push({n,p});
+total+=p;
+
+document.getElementById("cartBox").style.display="block";
+
+document.getElementById("cartItems").innerHTML=
+cart.map(i=>`<div>${i.n} - Rs ${i.p}</div>`).join("");
+
+document.getElementById("total").innerText=total;
+}
+
+/* CLEAR */
+function clearCart(){
+cart=[];
+total=0;
+document.getElementById("cartBox").style.display="none";
+}
+
+/* PRINT + SAVE */
+function printBill(){
+if(cart.length==0)return;
+
+let table=document.getElementById("table").value;
+let items="";
+cart.forEach(i=>{
+items+=`${i.n} ${i.p}\n`;
+});
+
+/* SAVE TO SHEET */
+fetch(scriptURL,{
+method:"POST",
+mode:"no-cors",
+body:JSON.stringify({
+table:table,
+items:items,
+total:total,
+date:new Date().toLocaleString()
+})
+});
+
+/* PRINT */
+document.getElementById("print").innerText=
+`SUSARA CAFE
+Table: ${table}
+----------------
+${items}
+----------------
+TOTAL: Rs ${total}
+`;
+
+window.print();
+clearCart();
+}
+
+render();
+
 </script>
+
 </body>
 </html>
