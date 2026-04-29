@@ -3,218 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Susara Cafe POS</title>
+<title>SUSARA POS FINAL FIX</title>
 
 <style>
-:root{
---brand:#2c3e50;
---accent:#e67e22;
---bg:#f4f6f7;
---success:#27ae60;
---danger:#e74c3c;
-}
-
-body{
-margin:0;
-font-family:sans-serif;
-background:var(--bg);
-padding-bottom:130px;
-}
+body{margin:0;font-family:sans-serif;background:#f4f6f8;padding-bottom:120px;}
 
 nav{
-background:var(--brand);
+background:#2c3e50;
 color:white;
 padding:12px;
 display:flex;
 justify-content:space-between;
-align-items:center;
-}
-
-input{
-width:50px;
-text-align:center;
 }
 
 .container{padding:10px;}
 
-.section{
-font-weight:bold;
-margin-top:15px;
-color:#555;
-}
+.section{margin-top:15px;font-weight:bold;color:#555;}
 
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 
-.item{
+.card{
 background:white;
 padding:10px;
-border-radius:10px;
+border-radius:8px;
 border:1px solid #ddd;
 }
 
-.item:active{transform:scale(0.97);}
-
-.price{color:var(--accent);font-weight:bold;}
+.card:active{background:#eee;}
 
 .cart{
 position:fixed;
 bottom:0;
 width:100%;
-background:var(--brand);
+background:#2c3e50;
 color:white;
-padding:12px;
+padding:10px;
 display:none;
 }
 
-button{
-border:none;
-padding:10px;
-border-radius:8px;
+button{padding:10px;border:none;border-radius:5px;}
+
+.print{background:#27ae60;color:white;width:70%;}
+.clear{background:red;color:white;width:25%;}
+
+/* LOGIN FIX */
+#loginScreen{
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:#2c3e50;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+color:white;
+z-index:9999;
 }
 
-.print{background:var(--success);color:white;width:65%;}
-.clear{background:var(--danger);color:white;width:30%;}
+input{
+padding:10px;
+margin:5px;
+border-radius:5px;
+border:none;
+}
 
+/* PRINT */
 @media print{
 body *{visibility:hidden;}
-#print,#print *{visibility:visible;}
-#print{
-position:absolute;
-left:0;
-top:0;
-width:58mm;
-font-size:12px;
-font-family:monospace;
-}
+#printArea,#printArea *{visibility:visible;}
+#printArea{position:absolute;top:0;left:0;width:58mm;font-size:11px;}
 }
 </style>
 </head>
 
 <body>
 
+<!-- LOGIN -->
+<div id="loginScreen">
+<h2>SUSARA POS LOGIN</h2>
+<input id="u" placeholder="User ID">
+<input id="p" type="password" placeholder="Password">
+<button onclick="doLogin()">LOGIN</button>
+</div>
+
 <nav>
-<b>SUSARA CAFE</b>
-Table <input id="table" value="1">
+<div>SUSARA CAFFE</div>
+<div>TBL <input id="tbl" type="number" value="1" style="width:40px"></div>
 </nav>
 
-<div class="container" id="menu"></div>
+<div class="container">
+<div id="menu"></div>
+</div>
 
-<div class="cart" id="cartBox">
-<div id="cartItems"></div>
-<b>Total: Rs <span id="total">0</span></b><br><br>
-
-<button class="print" onclick="printBill()">PRINT</button>
+<div class="cart" id="cart">
+<div id="items"></div>
+<div>Total Rs.<span id="total">0</span></div>
+<button class="print" onclick="save()">PRINT</button>
 <button class="clear" onclick="clearCart()">CLEAR</button>
 </div>
 
-<pre id="print"></pre>
+<!-- PRINT AREA -->
+<div id="printArea">
+<center><b>SUSARA CAFFE</b></center>
+<div>Bill: <span id="billno"></span></div>
+<div>Table: <span id="ptbl"></span></div>
+<hr>
+<div id="pitems"></div>
+<hr>
+<div>Total Rs.<span id="ptotal"></span></div>
+</div>
 
 <script>
 
-const scriptURL="https://script.google.com/macros/s/AKfycbybEjjxx2qUylSok_Npg0h4VRZ9LRxRrmX0DoC-wYRXakjMP0Kiwot3vcpGlgAF3g-xuQ/exec";
+const URL="https://script.google.com/macros/s/AKfycbybEjjxx2qUylSok_Npg0h4VRZ9LRxRrmX0DoC-wYRXakjMP0Kiwot3vcpGlgAF3g-xuQ/exec";
 
-/* FULL MENU */
-const menuData = {
-"Special":[
-{n:"Gajar ko Aalu Paratha",p:100},
-{n:"Fapar ko Jhol Momo",p:230}
-],
-
-"Coffee":[
-{n:"Espresso",p:100},{n:"Doppio",p:150},{n:"Americano",p:130},
-{n:"Cappuccino",p:150},{n:"Cafe Latte",p:200},{n:"Honey Latte",p:220},
-{n:"Lungo",p:160},{n:"Hot Choc",p:200},{n:"Flat White",p:180},
-{n:"Hot Lemon Honey",p:100},{n:"Lemon Tea",p:60},
-{n:"Black Tea",p:50},{n:"Green Tea",p:50}
-],
-
-"Breakfast":[
-{n:"Chana Anda",p:120},{n:"Samosa Tarkari",p:120},
-{n:"Lachha Paratha",p:110},{n:"Puri Tarkari",p:120},
-{n:"Chana Tarkari",p:80},{n:"Bread Omlet",p:120},
-{n:"Veg Sandwich",p:150},{n:"Egg Sandwich",p:190},
-{n:"Chicken Sandwich",p:220},{n:"Mix Sandwich",p:250}
-],
-
-"Chowmein":[
-{n:"Veg Chowmein",p:120},{n:"Chicken Chowmein",p:180},
-{n:"Egg Chowmein",p:150},{n:"Mix Chowmein",p:250}
-],
-
-"Thukpa":[
-{n:"Veg Thukpa",p:180},{n:"Chicken Thukpa",p:230},
-{n:"Egg Thukpa",p:210},{n:"Mix Thukpa",p:250}
-],
-
-"Combo":[
-{n:"Veg Combo",p:200},{n:"Chicken Combo",p:250},{n:"Mix Combo",p:280}
-],
-
-"Lassi":[
-{n:"Plain Lassi",p:120},{n:"Banana Lassi",p:150},{n:"Mix Lassi",p:180}
-]
+/* MENU */
+const menu={
+"Special":[{n:"Gajar ko Aalu Paratha",p:100},{n:"Fapar ko Jhol Momo",p:230}],
+"Coffee":[{n:"Espresso",p:100},{n:"Doppio",p:150},{n:"Americano",p:130},{n:"Cappuccino",p:150},{n:"Cafe Latte",p:200},{n:"Honey Latte",p:220},{n:"Lungo",p:160},{n:"Hot Choc",p:200},{n:"Flat White",p:180},{n:"Hot Lemon Honey",p:100},{n:"Lemon Tea",p:60},{n:"Black Tea",p:50},{n:"Green Tea",p:50}],
+"Breakfast":[{n:"Chana Anda",p:120},{n:"Samosa Tarkari",p:120},{n:"Lachha Paratha",p:110},{n:"Puri Tarkari",p:120},{n:"Chana Tarkari",p:80},{n:"Bread Omlet",p:120},{n:"Veg Sandwich",p:150},{n:"Egg Sandwich",p:190},{n:"Chicken Sandwich",p:220},{n:"Mix Sandwich",p:250}],
+"Chowmein":[{n:"Veg Chowmein",p:120},{n:"Chicken Chowmein",p:180},{n:"Egg Chowmein",p:150},{n:"Mix Chowmein",p:250}],
+"Thukpa":[{n:"Veg Thukpa",p:180},{n:"Chicken Thukpa",p:230},{n:"Egg Thukpa",p:210},{n:"Mix Thukpa",p:250}],
+"Combo":[{n:"Veg Combo",p:200},{n:"Chicken Combo",p:250},{n:"Mix Combo",p:280}],
+"Lassi":[{n:"Plain Lassi",p:120},{n:"Banana Lassi",p:150},{n:"Mix Lassi",p:180}]
 };
-
-const momoList=[
-{t:"Chicken Momo",s:150,f:200,j:220,c:250},
-{t:"Veg Momo",s:130,f:160,j:190,c:220},
-{t:"Buff Momo",s:200,f:250,j:280,c:300},
-{t:"Kera Veg Momo",s:150,f:200,j:220,c:250}
-];
 
 let cart=[];
 let total=0;
 
-/* RENDER */
+/* LOGIN FIX */
+function doLogin(){
+let u=document.getElementById("u").value;
+let p=document.getElementById("p").value;
+
+if(u==="admin" && p==="1234"){
+document.getElementById("loginScreen").style.display="none";
+render();
+}
+else{
+alert("Wrong ID or Password");
+}
+}
+
+/* RENDER MENU */
 function render(){
-let html="";
-
-/* MOMO */
-html+=`<div class="section">MOMO</div><div class="grid">`;
-momoList.forEach(m=>{
-html+=`
-<div class="item">
-<b>${m.t}</b><br>
-<button onclick="add('${m.t} Steam',${m.s})">${m.s}</button>
-<button onclick="add('${m.t} Fry',${m.f})">${m.f}</button>
-<button onclick="add('${m.t} Jhol',${m.j})">${m.j}</button>
-<button onclick="add('${m.t} Chilly',${m.c})">${m.c}</button>
-</div>`;
+let h="";
+for(let c in menu){
+h+=`<div class="section">${c}</div><div class="grid">`;
+menu[c].forEach(i=>{
+h+=`<div class="card" onclick="add('${i.n}',${i.p})">${i.n}<br>Rs.${i.p}</div>`;
 });
-html+=`</div>`;
-
-/* MENU */
-for(let cat in menuData){
-html+=`<div class="section">${cat}</div><div class="grid">`;
-
-menuData[cat].forEach(i=>{
-html+=`
-<div class="item" onclick="add('${i.n}',${i.p})">
-${i.n}<br>
-<span class="price">Rs ${i.p}</span>
-</div>`;
-});
-
-html+="</div>";
+h+="</div>";
+}
+document.getElementById("menu").innerHTML=h;
 }
 
-document.getElementById("menu").innerHTML=html;
-}
-
-/* ADD */
+/* ADD ITEM */
 function add(n,p){
 cart.push({n,p});
 total+=p;
-
-document.getElementById("cartBox").style.display="block";
-
-document.getElementById("cartItems").innerHTML=
-cart.map(i=>`<div>${i.n} - Rs ${i.p}</div>`).join("");
-
+document.getElementById("cart").style.display="block";
+document.getElementById("items").innerHTML=cart.map(i=>i.n+" "+i.p).join("<br>");
 document.getElementById("total").innerText=total;
 }
 
@@ -222,46 +171,38 @@ document.getElementById("total").innerText=total;
 function clearCart(){
 cart=[];
 total=0;
-document.getElementById("cartBox").style.display="none";
+document.getElementById("cart").style.display="none";
 }
 
-/* PRINT + SAVE */
-function printBill(){
+/* SAVE + PRINT */
+function save(){
 if(cart.length==0)return;
 
-let table=document.getElementById("table").value;
-let items="";
-cart.forEach(i=>{
-items+=`${i.n} ${i.p}\n`;
-});
+let bill=localStorage.getItem("bill")||0;
+bill++;
+localStorage.setItem("bill",bill);
 
-/* SAVE TO SHEET */
-fetch(scriptURL,{
+document.getElementById("billno").innerText=bill;
+document.getElementById("ptbl").innerText=document.getElementById("tbl").value;
+document.getElementById("ptotal").innerText=total;
+
+document.getElementById("pitems").innerHTML=
+cart.map(i=>i.n+" - "+i.p).join("<br>");
+
+fetch(URL,{
 method:"POST",
 mode:"no-cors",
 body:JSON.stringify({
-table:table,
-items:items,
-total:total,
-date:new Date().toLocaleString()
+date:new Date().toISOString().split("T")[0],
+table:document.getElementById("tbl").value,
+items:cart.map(i=>i.n).join(","),
+amount:total
 })
 });
-
-/* PRINT */
-document.getElementById("print").innerText=
-`SUSARA CAFE
-Table: ${table}
-----------------
-${items}
-----------------
-TOTAL: Rs ${total}
-`;
 
 window.print();
 clearCart();
 }
-
-render();
 
 </script>
 
